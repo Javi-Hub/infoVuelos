@@ -214,6 +214,26 @@ public class AppController implements Initializable {
                 image = new Image(R.getImage("airfrance.png"));
                 imageLogo.setImage(image);
                 break;
+            case "british airways":
+                image = new Image(R.getImage("britishairways.png"));
+                imageLogo.setImage(image);
+                break;
+            case "lufthansa":
+                image = new Image(R.getImage("lufthansa.png"));
+                imageLogo.setImage(image);
+                break;
+            case "emirates airlines":
+                image = new Image(R.getImage("emirates.png"));
+                imageLogo.setImage(image);
+                break;
+            case "american airlines":
+                image = new Image(R.getImage("american.png"));
+                imageLogo.setImage(image);
+                break;
+            case "tap portugal":
+                image = new Image(R.getImage("tapportugal.png"));
+                imageLogo.setImage(image);
+                break;
         }
     }
 
