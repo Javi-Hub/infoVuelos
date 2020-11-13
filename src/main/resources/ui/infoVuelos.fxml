@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
@@ -93,10 +94,13 @@
             <TextField fx:id="tfFecha" layoutX="119.0" layoutY="209.0" />
             <ComboBox fx:id="cbClase" layoutX="118.0" layoutY="252.0" prefWidth="150.0" />
 
-            <Button fx:id="btReset" layoutX="25.0" layoutY="300.0" mnemonicParsing="false" onAction="#resetFormulario" style="-fx-border-color: #0099FF;" text="Reset">
+            <Button fx:id="btReset" layoutX="25.0" layoutY="300.0" mnemonicParsing="false" onAction="#resetFormulario" style="-fx-border-color: #0099FF; -fx-background-color: #ff8877;" text="Reset">
                <font>
                   <Font name="Consolas Bold" size="14.0" />
                </font>
+               <opaqueInsets>
+                  <Insets />
+               </opaqueInsets>
             </Button>
             <Button fx:id="btGuardar" layoutX="99.0" layoutY="300.0" mnemonicParsing="false" onAction="#guardarVuelo" style="-fx-border-color: #0099FF;" text="Guardar">
                <font>
@@ -128,7 +132,7 @@
                   <TableColumn fx:id="tcClase" prefWidth="177.0" style="-fx-alignment: center; -fx-font-family: Consolas; -fx-font-size: 17;" text="Clase" />
               </columns>
             </TableView>
-            <ImageView fx:id="imageLogo" fitHeight="358.0" fitWidth="406.0" layoutX="20.0" layoutY="364.0" nodeOrientation="INHERIT" opacity="0.5" pickOnBounds="true" preserveRatio="true" />
+            <ImageView fx:id="imageLogo" fitHeight="358.0" fitWidth="406.0" layoutX="19.0" layoutY="357.0" nodeOrientation="INHERIT" opacity="0.5" pickOnBounds="true" preserveRatio="true" />
          </children>
     </AnchorPane>
   </children>

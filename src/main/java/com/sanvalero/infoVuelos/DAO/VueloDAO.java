@@ -1,11 +1,12 @@
 package com.sanvalero.infoVuelos.DAO;
 
 import com.sanvalero.infoVuelos.domain.Vuelo;
+import com.sun.prism.ResourceFactoryListener;
 
-import java.security.cert.TrustAnchor;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.SQLOutput;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,10 +21,10 @@ public class VueloDAO extends BaseDAO{
     final String GUARDAR = "INSERT INTO vuelos (codigo, origen, destino, operadora, fecha, clase) VALUES (?, ?, ?, ?, ?, ?)";
     final String MODIFICAR = "UPDATE vuelos SET origen = ?, destino = ?, operadora = ?, fecha = ?, clase = ? WHERE codigo = ?";
     final String ELIMINAR = "DELETE FROM vuelos WHERE codigo = ?";
+    final String EXISTE = "SELECT * FROM vuelos WHERE codigo = ?";
 
-    public void guardarVuelo(Vuelo vuelo){
+    public void guardarVuelo(Vuelo vuelo)throws SQLException{
 
-        try {
             sentencia = conexion.prepareStatement(GUARDAR);
             sentencia.setString(1, vuelo.getCodigo());
             sentencia.setString(2, vuelo.getOrigen());
@@ -32,22 +33,10 @@ public class VueloDAO extends BaseDAO{
             sentencia.setString(5, vuelo.getFecha());
             sentencia.setString(6, vuelo.getClase());
             sentencia.executeUpdate();
-
-        }catch (SQLException sqle){
-            sqle.printStackTrace();
-        } finally {
-            if (sentencia != null){
-                try {
-                    sentencia.close();
-                } catch (SQLException sqle){
-                    sqle.printStackTrace();
-                }
-            }
-        }
     }
 
-    public void modificarVuelo(Vuelo vuelo){
-        try {
+    public void modificarVuelo(Vuelo vuelo) throws SQLException{
+
             sentencia = conexion.prepareStatement(MODIFICAR);
             sentencia.setString(1, vuelo.getOrigen());
             sentencia.setString(2, vuelo.getDestino());
@@ -56,44 +45,20 @@ public class VueloDAO extends BaseDAO{
             sentencia.setString(5, vuelo.getClase());
             sentencia.setString(6, vuelo.getCodigo());
             sentencia.executeUpdate();
-        }catch (SQLException sqle){
-            sqle.printStackTrace();
-        }finally {
-            if (sentencia != null){
-                try {
-                    sentencia.close();
-                }catch (SQLException sqle){
-                    sqle.printStackTrace();
-                }
-            }
-        }
 
     }
 
-    public void eliminarVuelo(Vuelo vuelo) {
-        try {
+    public void eliminarVuelo(Vuelo vuelo) throws SQLException{
+
             sentencia = conexion.prepareStatement(ELIMINAR);
             sentencia.setString(1, vuelo.getCodigo());
             sentencia.executeUpdate();
-        } catch (SQLException sqle){
-            sqle.printStackTrace();
-        }finally {
-            if (sentencia != null){
-                try {
-                    sentencia.close();
-                } catch (SQLException sqle){
-                    sqle.printStackTrace();
-                }
-            }
-        }
-
 
     }
 
-    public List<Vuelo> listarVuelos(){
+    public List<Vuelo> listarVuelos() throws SQLException{
         String sql = "SELECT * FROM vuelos";
 
-        try {
             sentencia = conexion.prepareStatement(sql);
             resultado = sentencia.executeQuery();
             List<Vuelo> lista = new ArrayList<Vuelo>();
@@ -107,10 +72,14 @@ public class VueloDAO extends BaseDAO{
             }
             return lista;
 
-        }catch (SQLException sqle){
-            sqle.printStackTrace();
-        }
-        return null;
+    }
+
+    public boolean existeVuelo(String codigo) throws SQLException{
+        sentencia = conexion.prepareStatement(EXISTE);
+        sentencia.setString(1, codigo);
+        resultado = sentencia.executeQuery();
+        return resultado.next();
+
     }
 
 }

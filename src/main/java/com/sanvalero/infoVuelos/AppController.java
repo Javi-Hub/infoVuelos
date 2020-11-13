@@ -2,6 +2,7 @@ package com.sanvalero.infoVuelos;
 
 import com.sanvalero.infoVuelos.DAO.VueloDAO;
 import com.sanvalero.infoVuelos.domain.Vuelo;
+import com.sanvalero.infoVuelos.util.AlertUtils;
 import com.sanvalero.infoVuelos.util.R;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -18,6 +19,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
 import java.net.URL;
+import java.sql.SQLException;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
@@ -27,164 +29,136 @@ import java.util.ResourceBundle;
  */
 public class AppController implements Initializable {
 
-    public TextField tfCodigo;
-    public TextField tfOrigen;
-    public TextField tfDestino;
-    public TextField tfOperadora;
-    public TextField tfFecha;
+    public TextField tfCodigo, tfOrigen, tfDestino, tfOperadora, tfFecha;
     public ComboBox<String> cbClase;
     public TableView<Vuelo> tvLista;
-    public TableColumn<Vuelo, String> tcCodigo;
-    public TableColumn<Vuelo, String> tcOrigen;
-    public TableColumn<Vuelo, String> tcDestino;
-    public TableColumn<Vuelo, String> tcOperadora;
-    public TableColumn<Vuelo, String> tcFecha;
-    public TableColumn<Vuelo, String> tcClase;
+    public TableColumn<Vuelo, String> tcCodigo, tcOrigen, tcDestino, tcOperadora, tcFecha, tcClase;
+    public Button btReset, btGuardar, btModificar, btEliminar;
     public Label lbEstado;
     public ObservableList<Vuelo> listaVuelos;
     public Image image;
     public ImageView imageLogo;
 
     private VueloDAO vueloDAO;
-    private Alert alertWarning = new Alert(Alert.AlertType.WARNING);
     private Alert alertConfirm = new Alert(Alert.AlertType.CONFIRMATION);
     private Optional<ButtonType> action;
 
-    public AppController(){
+    public AppController() {
         vueloDAO = new VueloDAO();
-        vueloDAO.conectar();
+        try {
+            vueloDAO.conectar();
+        } catch (ClassNotFoundException cnfe){
+            AlertUtils.mostrarError("ERROR al cargar la aplicación");
+        } catch (SQLException sqle) {
+            AlertUtils.mostrarError("ERROR al conectar con la Base de Datos");
+        }
+
     }
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        ObservableList<String> items = FXCollections.observableArrayList("First Class", "Bussiness", "Premium Economy", "Economy" );
+        ObservableList<String> items = FXCollections.observableArrayList("<Seleccione Tipo>","First Class", "Bussiness", "Premium Economy", "Economy" );
         cbClase.setItems(items);
         cargarLogo();
-        cargarTableView();
-    }
-
-    @FXML
-    public void cargarLogo(){
-
-        String logo = tfOperadora.getText().toLowerCase();
-        condicionalSwitch(logo);
-
-      tfOperadora.focusedProperty().addListener(new ChangeListener<Boolean>() {
-          @Override
-          public void changed(ObservableValue<? extends Boolean> observableValue, Boolean oldValue, Boolean newValue) {
-               if (oldValue){
-                   String logo = tfOperadora.getText().toLowerCase();
-                   condicionalSwitch(logo);
-               }
-          }
-      });
-
-
-    }
-
-    @FXML
-    public void configTableView(){
-        tcCodigo.setCellValueFactory(new PropertyValueFactory<Vuelo, String>("codigo"));
-        tcOrigen.setCellValueFactory(new PropertyValueFactory<Vuelo, String>("origen"));
-        tcDestino.setCellValueFactory(new PropertyValueFactory<Vuelo, String>("destino"));
-        tcOperadora.setCellValueFactory(new PropertyValueFactory<Vuelo, String>("operadora"));
-        tcFecha.setCellValueFactory(new PropertyValueFactory<Vuelo, String>("fecha"));
-        tcClase.setCellValueFactory(new PropertyValueFactory<Vuelo, String>("clase"));
-    }
-
-    @FXML
-    public void cargarTableView(){
-        listaVuelos = FXCollections.observableArrayList(vueloDAO.listarVuelos());
-        tvLista.setItems(listaVuelos);
-        configTableView();
-    }
-
-    @FXML
-    public void nuevoCodigo(Event event){
-        Vuelo vuelo = new Vuelo();
-        vuelo.setCodigo();
-        tfCodigo.setText(vuelo.getCodigo());
-    }
-
-    @FXML
-    public void resetFormulario(Event event){
-        tfCodigo.setText("");
-        tfOrigen.setText("");
-        tfDestino.setText("");
-        tfOperadora.setText("");
-        tfFecha.setText("");
-        cbClase.setValue(null);
-        lbEstado.setText("");
-        imageLogo.setImage(null);
-    }
-
-    @FXML
-    public void guardarVuelo(Event event){
-        String codigo = tfCodigo.getText();
-        if (codigo.equals("")){
-            alertWarning.setTitle("ATENCIÓN");
-            alertWarning.setContentText("Debe generar un código para el vuelo");
-            alertWarning.show();
-        } else {
-            String origen = tfOrigen.getText();
-            String destino = tfDestino.getText();
-            String operadora = tfOperadora.getText();
-            String fecha = tfFecha.getText();
-            String clase = cbClase.getSelectionModel().getSelectedItem();
-            Vuelo vuelo = new Vuelo(codigo, origen, destino, operadora, fecha, clase);
-            alertConfirm.setTitle("Confirmacion");
-            alertConfirm.setContentText("¿Está seguro de guardar los datos?");
-            action = alertConfirm.showAndWait();
-            if (action.get() == ButtonType.OK){
-                vueloDAO.guardarVuelo(vuelo);
-                lbEstado.setText("Registro guardado correctamente");
-            }
+        try {
             cargarTableView();
+        } catch (SQLException sqle) {
+            sqle.printStackTrace();
         }
     }
 
     @FXML
-    public void modificarVuelo(Event event){
+    public void resetFormulario(Event event){
+        limpiarCajas();
+        modoEdicion(true);
+    }
+
+
+    @FXML
+    public void guardarVuelo(Event event) throws SQLException{
         String codigo = tfCodigo.getText();
         if (codigo.equals("")){
-            alertWarning.setTitle("ATENCIÓN");
-            alertWarning.setContentText("Introduzca el código de vuelo que desea modificar");
-            alertWarning.show();
-        } else{
-            String origen = tfOrigen.getText();
-            String destino = tfDestino.getText();
-            String operadora = tfOperadora.getText();
-            String fecha = tfFecha.getText();
-            String clase = cbClase.getSelectionModel().getSelectedItem();
-            Vuelo vuelo = new Vuelo(codigo, origen, destino, operadora, fecha, clase);
-            alertConfirm.setTitle("Confirmación");
-            alertConfirm.setContentText("¿Está seguro de guardar los cambios?");
-            action = alertConfirm.showAndWait();
-            if (action.get() == ButtonType.OK){
-                vueloDAO.modificarVuelo(vuelo);
-                lbEstado.setText("El vuelo ha sido modificado correctamente");
-            }
-            cargarTableView();
+            AlertUtils.mostrarError("Debe generar un código para el vuelo");
+            return;
+        }
+        try {
+                String origen = tfOrigen.getText();
+                String destino = tfDestino.getText();
+                String operadora = tfOperadora.getText();
+                String fecha = tfFecha.getText();
+                String clase = cbClase.getSelectionModel().getSelectedItem();
+                Vuelo vuelo = new Vuelo(codigo, origen, destino, operadora, fecha, clase);
+                alertConfirm.setTitle("Guardar Vuelo");
+                alertConfirm.setHeaderText("Estas seguro de guardar los datos");
+                alertConfirm.setContentText("Confirmar");
+                action = alertConfirm.showAndWait();
+                if (action.get() == ButtonType.OK){
+                    if (vueloDAO.existeVuelo(codigo)){
+                        AlertUtils.mostrarError("El código ya está asignado a un vuelo");
+                        return;
+                    }
+                    vueloDAO.guardarVuelo(vuelo);
+                    lbEstado.setText("Registro guardado correctamente");
+                    cargarTableView();
+                    limpiarCajas();
+                    modoEdicion(false);
+                }
+
+        } catch (SQLException sqle) {
+                AlertUtils.mostrarError("ERROR al guardar el vuelo");
+        }
+    }
+
+    @FXML
+    public void modificarVuelo(Event event) throws SQLException{
+        String codigo = tfCodigo.getText();
+        if (codigo.equals("")){
+            AlertUtils.mostrarError("Introduzca el código de vuelo que desea modificar");
+            return;
+        }
+        try {
+                String origen = tfOrigen.getText();
+                String destino = tfDestino.getText();
+                String operadora = tfOperadora.getText();
+                String fecha = tfFecha.getText();
+                String clase = cbClase.getSelectionModel().getSelectedItem();
+                Vuelo vuelo = new Vuelo(codigo, origen, destino, operadora, fecha, clase);
+                alertConfirm.setTitle("Modificar Vuelo");
+                alertConfirm.setHeaderText("¿Está seguro de guardar los cambios?");
+                alertConfirm.setContentText("Confirmar");
+                action = alertConfirm.showAndWait();
+                    if (action.get() == ButtonType.OK){
+                    vueloDAO.modificarVuelo(vuelo);
+                    lbEstado.setText("El vuelo ha sido modificado correctamente");
+                    cargarTableView();
+                    }
+
+        } catch (SQLException sqle) {
+            AlertUtils.mostrarError("No se ha podido modificar el vuelo");
         }
     }
 
     @FXML
     public void eliminarVuelo(Event event){
+
         String codigo = tfCodigo.getText();
-        if (codigo.equals(null)){
-            alertWarning.setTitle("ATENCIÓN");
-            alertWarning.setContentText("Introduzca el código del vuelo que desea eliminar");
-            alertWarning.show();
-        } else {
-            Vuelo vuelo = new Vuelo(codigo);
-            alertConfirm.setTitle("Confimación");
-            alertConfirm.setContentText("¿Está seguro de eliminar el registro seleccionado?");
-            action = alertConfirm.showAndWait();
-            if (action.get() == ButtonType.OK){
-                vueloDAO.eliminarVuelo(vuelo);
-                lbEstado.setText("El vuelo ha sido eliminado correctamente");
-            }
-            cargarTableView();
+        if (codigo.equals("")){
+            AlertUtils.mostrarError("Introduzca el código del vuelo que desea eliminar");
+            return;
+        }
+        try{
+                Vuelo vuelo = new Vuelo(codigo);
+                alertConfirm.setTitle("Eliminar Vuelo");
+                alertConfirm.setHeaderText("¿Está seguro de eliminar el registro seleccionado?");
+                alertConfirm.setContentText("Confirmar");
+                action = alertConfirm.showAndWait();
+                if (action.get() == ButtonType.OK){
+                    vueloDAO.eliminarVuelo(vuelo);
+                    lbEstado.setText("El vuelo ha sido eliminado correctamente");
+                }
+                cargarTableView();
+        } catch (SQLException sqle){
+            AlertUtils.mostrarError("No se ha podido eliminar el vuelo");
         }
     }
 
@@ -200,7 +174,7 @@ public class AppController implements Initializable {
     }
 
     @FXML
-    public void condicionalSwitch(String name){
+    private void condicionalSwitch(String name){
         switch (name){
             case "iberia":
                 image = new Image(R.getImage("iberia.png"));
@@ -234,7 +208,75 @@ public class AppController implements Initializable {
                 image = new Image(R.getImage("tapportugal.png"));
                 imageLogo.setImage(image);
                 break;
+            case "qatar airways":
+                image = new Image(R.getImage("qatar.png"));
+                imageLogo.setImage(image);
+                break;
+            case "":
+                image = new Image(R.getImage("avion.png"));
+                imageLogo.setImage(image);
+                break;
         }
+    }
+
+    @FXML
+    private void cargarLogo(){
+
+        String logo = tfOperadora.getText().toLowerCase();
+        condicionalSwitch(logo);
+
+        tfOperadora.focusedProperty().addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue<? extends Boolean> observableValue, Boolean oldValue, Boolean newValue) {
+                if (oldValue){
+                    String logo = tfOperadora.getText().toLowerCase();
+                    condicionalSwitch(logo);
+                }
+            }
+        });
+    }
+
+    @FXML
+    private void configTableView(){
+        tcCodigo.setCellValueFactory(new PropertyValueFactory<Vuelo, String>("codigo"));
+        tcOrigen.setCellValueFactory(new PropertyValueFactory<Vuelo, String>("origen"));
+        tcDestino.setCellValueFactory(new PropertyValueFactory<Vuelo, String>("destino"));
+        tcOperadora.setCellValueFactory(new PropertyValueFactory<Vuelo, String>("operadora"));
+        tcFecha.setCellValueFactory(new PropertyValueFactory<Vuelo, String>("fecha"));
+        tcClase.setCellValueFactory(new PropertyValueFactory<Vuelo, String>("clase"));
+    }
+
+    @FXML
+    private void cargarTableView() throws SQLException{
+        listaVuelos = FXCollections.observableArrayList(vueloDAO.listarVuelos());
+        tvLista.setItems(listaVuelos);
+        configTableView();
+    }
+
+    private void limpiarCajas() {
+        tfCodigo.setText("");
+        tfOrigen.setText("");
+        tfDestino.setText("");
+        tfOperadora.setText("");
+        tfFecha.setText("");
+        cbClase.setValue("<Seleccione Tipo>");
+        lbEstado.setText("");
+        imageLogo.setImage(null);
+    }
+
+    @FXML
+    private void nuevoCodigo(Event event){
+        Vuelo vuelo = new Vuelo();
+        vuelo.setCodigo();
+        tfCodigo.setText(vuelo.getCodigo());
+    }
+
+    private void modoEdicion (boolean activar){
+        btReset.setDisable(activar);
+        btGuardar.setDisable(!activar);
+        btModificar.setDisable(activar);
+        btEliminar.setDisable(activar);
+        tfCodigo.requestFocus();
     }
 
 }
