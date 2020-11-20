@@ -4,10 +4,12 @@ import com.sanvalero.infoVuelos.DAO.VueloDAO;
 import com.sanvalero.infoVuelos.domain.Vuelo;
 import com.sanvalero.infoVuelos.util.AlertUtils;
 import com.sanvalero.infoVuelos.util.R;
+import com.sun.net.httpserver.Headers;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -17,10 +19,17 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.stage.FileChooser;
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVPrinter;
 
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
+import java.util.FormatterClosedException;
+import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
@@ -164,6 +173,37 @@ public class AppController implements Initializable {
         tfFecha.setText(tvLista.getSelectionModel().selectedItemProperty().getValue().getFecha());
         cbClase.setValue(String.valueOf(tvLista.getSelectionModel().selectedItemProperty().getValue().getClase()));
         cargarLogo();
+    }
+
+    @FXML
+    public void importar(ActionEvent event){
+
+
+    }
+
+    @FXML
+    public void exportar(ActionEvent event){
+        try {
+            FileChooser fileChooser = new FileChooser();
+            File fichero = fileChooser.showSaveDialog(null);
+            FileWriter fileWriter = new FileWriter(fichero);
+
+            /*CSVPrinter printer = new CSVPrinter(fileWriter,
+                    CSVFormat.newFormat(';').withHeader("Código", "Origen", "Destino", "Operadora", "Fecha", "Clase"));*/
+
+            CSVPrinter printer = CSVFormat.TDF.withHeader("Código;", "Origen;", "Destino;", "Operadora;", "Fecha;", "Clase;").print(fileWriter);
+            List<Vuelo> vuelos = vueloDAO.listarVuelos();
+            for (Vuelo vuelo : vuelos) {
+                printer.printRecord(vuelo.getCodigo(),";", vuelo.getOrigen(), ";", vuelo.getDestino(),
+                        ";", vuelo.getOperadora(), ";", vuelo.getFecha(), ";", vuelo.getClase());
+            }
+            printer.close();
+        } catch (SQLException sqle){
+            AlertUtils.mostrarError("ERROR al importar los datos");
+        } catch (IOException ioe) {
+            AlertUtils.mostrarError("Errror al exportar los datos");
+        }
+
     }
 
     @FXML
