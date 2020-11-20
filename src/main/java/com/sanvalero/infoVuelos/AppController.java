@@ -18,6 +18,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
+import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
 import java.util.Optional;
@@ -40,7 +41,6 @@ public class AppController implements Initializable {
     public ImageView imageLogo;
 
     private VueloDAO vueloDAO;
-    private Alert alertConfirm = new Alert(Alert.AlertType.CONFIRMATION);
     private Optional<ButtonType> action;
 
     public AppController() {
@@ -51,6 +51,8 @@ public class AppController implements Initializable {
             AlertUtils.mostrarError("ERROR al cargar la aplicación");
         } catch (SQLException sqle) {
             AlertUtils.mostrarError("ERROR al conectar con la Base de Datos");
+        } catch (IOException io){
+            AlertUtils.mostrarError("ERRROR al conectar con la Base de Datos");
         }
 
     }
@@ -88,10 +90,7 @@ public class AppController implements Initializable {
                 String fecha = tfFecha.getText();
                 String clase = cbClase.getSelectionModel().getSelectedItem();
                 Vuelo vuelo = new Vuelo(codigo, origen, destino, operadora, fecha, clase);
-                alertConfirm.setTitle("Guardar Vuelo");
-                alertConfirm.setHeaderText("Estas seguro de guardar los datos");
-                alertConfirm.setContentText("Confirmar");
-                action = alertConfirm.showAndWait();
+                action = AlertUtils.mostrarConfirmacion("Está seguro de guardar los datos introducidos");
                 if (action.get() == ButtonType.OK){
                     if (vueloDAO.existeVuelo(codigo)){
                         AlertUtils.mostrarError("El código ya está asignado a un vuelo");
@@ -100,7 +99,7 @@ public class AppController implements Initializable {
                     vueloDAO.guardarVuelo(vuelo);
                     lbEstado.setText("Registro guardado correctamente");
                     cargarTableView();
-                    limpiarCajas();
+                    //limpiarCajas();
                     modoEdicion(false);
                 }
 
@@ -123,10 +122,7 @@ public class AppController implements Initializable {
                 String fecha = tfFecha.getText();
                 String clase = cbClase.getSelectionModel().getSelectedItem();
                 Vuelo vuelo = new Vuelo(codigo, origen, destino, operadora, fecha, clase);
-                alertConfirm.setTitle("Modificar Vuelo");
-                alertConfirm.setHeaderText("¿Está seguro de guardar los cambios?");
-                alertConfirm.setContentText("Confirmar");
-                action = alertConfirm.showAndWait();
+                action = AlertUtils.mostrarConfirmacion("Está seguro de modificar los cambios");
                     if (action.get() == ButtonType.OK){
                     vueloDAO.modificarVuelo(vuelo);
                     lbEstado.setText("El vuelo ha sido modificado correctamente");
@@ -148,10 +144,7 @@ public class AppController implements Initializable {
         }
         try{
                 Vuelo vuelo = new Vuelo(codigo);
-                alertConfirm.setTitle("Eliminar Vuelo");
-                alertConfirm.setHeaderText("¿Está seguro de eliminar el registro seleccionado?");
-                alertConfirm.setContentText("Confirmar");
-                action = alertConfirm.showAndWait();
+                action = AlertUtils.mostrarConfirmacion("¿Está seguro de eliminar el registro seleccionado?");
                 if (action.get() == ButtonType.OK){
                     vueloDAO.eliminarVuelo(vuelo);
                     lbEstado.setText("El vuelo ha sido eliminado correctamente");
@@ -212,6 +205,10 @@ public class AppController implements Initializable {
                 image = new Image(R.getImage("qatar.png"));
                 imageLogo.setImage(image);
                 break;
+            case "japan airlines":
+                image = new Image(R.getImage("japan.png"));
+                imageLogo.setImage(image);
+                break;
             case "":
                 image = new Image(R.getImage("avion.png"));
                 imageLogo.setImage(image);
@@ -253,6 +250,14 @@ public class AppController implements Initializable {
         configTableView();
     }
 
+
+    @FXML
+    private void nuevoCodigo(Event event){
+        Vuelo vuelo = new Vuelo();
+        vuelo.setCodigo();
+        tfCodigo.setText(vuelo.getCodigo());
+    }
+
     private void limpiarCajas() {
         tfCodigo.setText("");
         tfOrigen.setText("");
@@ -262,13 +267,6 @@ public class AppController implements Initializable {
         cbClase.setValue("<Seleccione Tipo>");
         lbEstado.setText("");
         imageLogo.setImage(null);
-    }
-
-    @FXML
-    private void nuevoCodigo(Event event){
-        Vuelo vuelo = new Vuelo();
-        vuelo.setCodigo();
-        tfCodigo.setText(vuelo.getCodigo());
     }
 
     private void modoEdicion (boolean activar){
