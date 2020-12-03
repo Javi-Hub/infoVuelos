@@ -1,5 +1,6 @@
 package com.sanvalero.infoVuelos.domain;
 
+import java.sql.Date;
 import java.util.Random;
 
 /**
@@ -12,7 +13,7 @@ public class Vuelo {
     private String origen;
     private String destino;
     private String  operadora;
-    private String fecha;
+    private Date fecha;
     private String clase;
 
     private final int N = 6;
@@ -25,7 +26,7 @@ public class Vuelo {
         this.codigo = codigo;
     }
 
-    public Vuelo(String codigo, String origen, String destino, String operadora, String fecha, String clase) {
+    public Vuelo(String codigo, String origen, String destino, String operadora, Date fecha, String clase) {
         this.codigo = codigo;
         this.origen = origen;
         this.destino = destino;
@@ -62,7 +63,7 @@ public class Vuelo {
         this.operadora = operadora;
     }
 
-    public void setFecha(String fecha) {
+    public void setFecha(Date fecha) {
         this.fecha = fecha;
     }
 
@@ -82,7 +83,7 @@ public class Vuelo {
         return operadora;
     }
 
-    public String getFecha() {
+    public Date getFecha() {
         return fecha;
     }
 

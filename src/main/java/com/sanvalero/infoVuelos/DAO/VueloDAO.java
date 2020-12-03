@@ -1,12 +1,10 @@
 package com.sanvalero.infoVuelos.DAO;
 
 import com.sanvalero.infoVuelos.domain.Vuelo;
-import com.sun.prism.ResourceFactoryListener;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.SQLOutput;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,12 +14,17 @@ import java.util.List;
  */
 public class VueloDAO extends BaseDAO{
 
-    PreparedStatement sentencia = null;
-    ResultSet resultado;
-    final String GUARDAR = "INSERT INTO vuelos (codigo, origen, destino, operadora, fecha, clase) VALUES (?, ?, ?, ?, ?, ?)";
-    final String MODIFICAR = "UPDATE vuelos SET origen = ?, destino = ?, operadora = ?, fecha = ?, clase = ? WHERE codigo = ?";
-    final String ELIMINAR = "DELETE FROM vuelos WHERE codigo = ?";
-    final String EXISTE = "SELECT * FROM vuelos WHERE codigo = ?";
+    public PreparedStatement sentencia = null;
+    public ResultSet resultado;
+    public final String GUARDAR = "INSERT INTO vuelos (codigo, origen, destino, operadora, fecha, clase) VALUES (?, ?, ?, ?, ?, ?)";
+    public final String MODIFICAR = "UPDATE vuelos SET origen = ?, destino = ?, operadora = ?, fecha = ?, clase = ? WHERE codigo = ?";
+    public final String ELIMINAR = "DELETE FROM vuelos WHERE codigo = ?";
+    public final String EXISTE = "SELECT * FROM vuelos WHERE codigo = ?";
+    public final String LISTAR_VUELOS = "SELECT * FROM vuelos ORDER BY operadora";
+    public final String FILTRO_ORIGEN = "SELECT * FROM vuelos WHERE UPPER(origen) = ?";
+    public final String FILTRO_DESTINO = "SELECT * FROM vuelos WHERE UPPER(destino) = ?";
+    public final String FILTRO_ORIGEN_DESTINO = "SELECT * FROM vuelos WHERE UPPER(origen) = ? AND UPPER(destino) = ?";
+    public final String BORRAR_DATOS = "TRUNCATE TABLE vuelos";
 
     public void guardarVuelo(Vuelo vuelo)throws SQLException{
 
@@ -30,7 +33,7 @@ public class VueloDAO extends BaseDAO{
             sentencia.setString(2, vuelo.getOrigen());
             sentencia.setString(3, vuelo.getDestino());
             sentencia.setString(4, vuelo.getOperadora());
-            sentencia.setString(5, vuelo.getFecha());
+            sentencia.setDate(5, vuelo.getFecha());
             sentencia.setString(6, vuelo.getClase());
             sentencia.executeUpdate();
     }
@@ -41,7 +44,7 @@ public class VueloDAO extends BaseDAO{
             sentencia.setString(1, vuelo.getOrigen());
             sentencia.setString(2, vuelo.getDestino());
             sentencia.setString(3, vuelo.getOperadora());
-            sentencia.setString(4, vuelo.getFecha());
+            sentencia.setDate(4, vuelo.getFecha());
             sentencia.setString(5, vuelo.getClase());
             sentencia.setString(6, vuelo.getCodigo());
             sentencia.executeUpdate();
@@ -53,26 +56,13 @@ public class VueloDAO extends BaseDAO{
             sentencia = conexion.prepareStatement(ELIMINAR);
             sentencia.setString(1, vuelo.getCodigo());
             sentencia.executeUpdate();
-
     }
 
-    public List<Vuelo> listarVuelos() throws SQLException{
-        String sql = "SELECT * FROM vuelos";
-
-            sentencia = conexion.prepareStatement(sql);
-            resultado = sentencia.executeQuery();
-            List<Vuelo> lista = new ArrayList<Vuelo>();
-            while (resultado.next()){
-                Vuelo vuelo = new Vuelo(
-                        resultado.getString(1), resultado.getString(2),
-                        resultado.getString(3), resultado.getString(4),
-                        resultado.getString(5), resultado.getString(6)
-                );
-                lista.add(vuelo);
-            }
-            return lista;
-
+    public void borrarDatos () throws SQLException {
+        sentencia = conexion.prepareStatement(BORRAR_DATOS);
+        sentencia.executeUpdate();
     }
+
 
     public boolean existeVuelo(String codigo) throws SQLException{
         sentencia = conexion.prepareStatement(EXISTE);
@@ -81,5 +71,83 @@ public class VueloDAO extends BaseDAO{
         return resultado.next();
 
     }
+
+    public List<Vuelo> filtrarOrigen (String origen) throws SQLException{
+            sentencia = conexion.prepareStatement(FILTRO_ORIGEN);
+            sentencia.setString(1, origen);
+            resultado = sentencia.executeQuery();
+            List<Vuelo> lista = new ArrayList<>();
+            while (resultado.next()){
+                Vuelo vuelo = new Vuelo(
+                        resultado.getString(1),
+                        resultado.getString(2),
+                        resultado.getString(3),
+                        resultado.getString(4),
+                        resultado.getDate(5),
+                        resultado.getString(6)
+                );
+                lista.add(vuelo);
+            }
+            return  lista;
+    }
+
+    public List<Vuelo> filtrarDestino (String destino) throws SQLException{
+        sentencia = conexion.prepareStatement(FILTRO_DESTINO);
+        sentencia.setString(1, destino);
+        resultado = sentencia.executeQuery();
+        List<Vuelo> lista = new ArrayList<>();
+        while (resultado.next()){
+            Vuelo vuelo = new Vuelo(
+                    resultado.getString(1),
+                    resultado.getString(2),
+                    resultado.getString(3),
+                    resultado.getString(4),
+                    resultado.getDate(5),
+                    resultado.getString(6)
+            );
+            lista.add(vuelo);
+        }
+        return  lista;
+    }
+
+    public List<Vuelo> filtrarOrigenDestino (String origen, String destino) throws SQLException{
+        sentencia = conexion.prepareStatement(FILTRO_ORIGEN_DESTINO);
+        sentencia.setString(1, origen);
+        sentencia.setString(2, destino);
+        resultado = sentencia.executeQuery();
+        List<Vuelo> lista = new ArrayList<>();
+        while (resultado.next()){
+            Vuelo vuelo = new Vuelo(
+                    resultado.getString(1),
+                    resultado.getString(2),
+                    resultado.getString(3),
+                    resultado.getString(4),
+                    resultado.getDate(5),
+                    resultado.getString(6)
+            );
+            lista.add(vuelo);
+        }
+        return  lista;
+    }
+
+
+
+    public List<Vuelo> listarVuelos() throws SQLException{
+
+            sentencia = conexion.prepareStatement(LISTAR_VUELOS);
+            resultado = sentencia.executeQuery();
+            List<Vuelo> lista = new ArrayList<Vuelo>();
+            while (resultado.next()){
+                Vuelo vuelo = new Vuelo(
+                        resultado.getString(1), resultado.getString(2),
+                        resultado.getString(3), resultado.getString(4),
+                        resultado.getDate(5), resultado.getString(6)
+                );
+                lista.add(vuelo);
+            }
+            return lista;
+
+    }
+
 
 }

@@ -1,35 +1,130 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.Cursor?>
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.Menu?>
-<?import javafx.scene.control.MenuBar?>
-<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.effect.Light.Distant?>
+<?import javafx.scene.effect.Lighting?>
+<?import javafx.scene.effect.Reflection?>
+<?import javafx.scene.effect.Shadow?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
-<VBox prefHeight="265.0" prefWidth="287.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
-  <children>
-    <MenuBar VBox.vgrow="NEVER">
-      <menus>
-        <Menu mnemonicParsing="false" text="File">
-          <items>
-            <MenuItem mnemonicParsing="false" text="Conectar" />
-            <MenuItem mnemonicParsing="false" text="Open…" />
-          </items>
-        </Menu>
-      </menus>
-    </MenuBar>
-    <AnchorPane maxHeight="-1.0" maxWidth="-1.0" prefHeight="240.0" prefWidth="273.0" VBox.vgrow="ALWAYS">
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <AnchorPane prefHeight="400.0" prefWidth="700.0" style="-fx-background-color: #00bcd4;">
          <children>
-            <Label layoutX="29.0" layoutY="61.0" text="Usuario" />
-            <Label layoutX="29.0" layoutY="98.0" text="Contraseña" />
-            <TextField layoutX="107.0" layoutY="57.0" />
-            <TextField layoutX="107.0" layoutY="94.0" />
-            <Button layoutX="91.0" layoutY="138.0" mnemonicParsing="false" text="OK" />
-            <Button layoutX="144.0" layoutY="138.0" mnemonicParsing="false" text="Cancel" />
+            <AnchorPane layoutX="268.0" layoutY="11.0" prefHeight="378.0" prefWidth="418.0" style="-fx-background-color: #ff7043;">
+               <children>
+                  <TextField fx:id="tfRegistroNombre" alignment="CENTER" layoutX="24.0" layoutY="14.0" prefHeight="44.0" prefWidth="371.0" style="-fx-text-fill: #ff0044;" text="Nombre">
+                     <font>
+                        <Font name="Calibri" size="24.0" />
+                     </font>
+                     <effect>
+                        <Lighting>
+                           <bumpInput>
+                              <Shadow />
+                           </bumpInput>
+                           <light>
+                              <Light.Distant color="#f1a5a5" />
+                           </light>
+                        </Lighting>
+                     </effect>
+                     <cursor>
+                        <Cursor fx:constant="TEXT" />
+                     </cursor>
+                  </TextField>
+                  <TextField fx:id="tfRegistroApellidos" alignment="CENTER" layoutX="24.0" layoutY="68.0" prefHeight="44.0" prefWidth="371.0" style="-fx-text-fill: #ff0044;" text="Apellidos">
+                     <font>
+                        <Font name="Calibri" size="24.0" />
+                     </font>
+                     <cursor>
+                        <Cursor fx:constant="TEXT" />
+                     </cursor>
+                     <effect>
+                        <Lighting>
+                           <bumpInput>
+                              <Shadow />
+                           </bumpInput>
+                           <light>
+                              <Light.Distant color="#f1a5a5" />
+                           </light>
+                        </Lighting>
+                     </effect></TextField>
+                  <TextField fx:id="tfRegistroNombreUsuario" alignment="CENTER" layoutX="24.0" layoutY="125.0" prefHeight="44.0" prefWidth="371.0" style="-fx-text-fill: #ff0044;" text="Nombre Usuario">
+                     <font>
+                        <Font name="Calibri" size="24.0" />
+                     </font>
+                     <cursor>
+                        <Cursor fx:constant="TEXT" />
+                     </cursor>
+                     <effect>
+                        <Lighting>
+                           <bumpInput>
+                              <Shadow />
+                           </bumpInput>
+                           <light>
+                              <Light.Distant color="#f1a5a5" />
+                           </light>
+                        </Lighting>
+                     </effect>
+                  </TextField>
+                  <TextField fx:id="tfRegistroEmail" alignment="CENTER" layoutX="24.0" layoutY="181.0" prefHeight="44.0" prefWidth="371.0" style="-fx-text-fill: #ff0044;" text="Email">
+                     <font>
+                        <Font name="Calibri" size="24.0" />
+                     </font>
+                     <cursor>
+                        <Cursor fx:constant="TEXT" />
+                     </cursor>
+                     <effect>
+                        <Lighting>
+                           <bumpInput>
+                              <Shadow />
+                           </bumpInput>
+                           <light>
+                              <Light.Distant color="#f1a5a5" />
+                           </light>
+                        </Lighting>
+                     </effect>
+                  </TextField>
+                  <PasswordField fx:id="pfRegistroPassword" alignment="CENTER" layoutX="24.0" layoutY="237.0" prefHeight="44.0" prefWidth="371.0" promptText="Password" style="-fx-text-fill: #ff0044;">
+                     <font>
+                        <Font name="Calibri" size="24.0" />
+                     </font>
+                     <cursor>
+                        <Cursor fx:constant="TEXT" />
+                     </cursor>
+                     <effect>
+                        <Lighting>
+                           <bumpInput>
+                              <Shadow />
+                           </bumpInput>
+                           <light>
+                              <Light.Distant color="#f1a5a5" />
+                           </light>
+                        </Lighting>
+                     </effect>
+                  </PasswordField>
+                  <Button fx:id="btRegistrar" alignment="CENTER" layoutX="150.0" layoutY="296.0" mnemonicParsing="false" onAction="#registrarUsuario" style="-fx-background-color: #f44336;" text="Signin" textAlignment="JUSTIFY" textFill="WHITE">
+                     <font>
+                        <Font name="Calibri" size="24.0" />
+                     </font>
+                     <effect>
+                        <Reflection />
+                     </effect>
+                  </Button>
+               </children>
+            </AnchorPane>
+            <Button fx:id="btLoginRegistro" alignment="CENTER" layoutX="100.0" layoutY="308.0" mnemonicParsing="false" onAction="#loginRegistro" style="-fx-background-color: #f44336;" text="Sign Up" textAlignment="JUSTIFY" textFill="WHITE">
+               <font>
+                  <Font name="Calibri" size="24.0" />
+               </font>
+               <effect>
+                  <Reflection />
+               </effect></Button>
          </children>
-    </AnchorPane>
-  </children>
+      </AnchorPane>
+   </children>
 </VBox>

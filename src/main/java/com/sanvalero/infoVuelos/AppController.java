@@ -4,7 +4,6 @@ import com.sanvalero.infoVuelos.DAO.VueloDAO;
 import com.sanvalero.infoVuelos.domain.Vuelo;
 import com.sanvalero.infoVuelos.util.AlertUtils;
 import com.sanvalero.infoVuelos.util.R;
-import com.sun.net.httpserver.Headers;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -28,7 +27,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
-import java.util.FormatterClosedException;
+import java.sql.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -39,11 +38,15 @@ import java.util.ResourceBundle;
  */
 public class AppController implements Initializable {
 
-    public TextField tfCodigo, tfOrigen, tfDestino, tfOperadora, tfFecha;
+    public TextField tfCodigo, tfOrigen, tfDestino, tfOperadora, tfFiltroOrigen, tfFiltroDestino, tfFiltroFecha;
     public ComboBox<String> cbClase;
+    public DatePicker dpFecha;
+
     public TableView<Vuelo> tvLista;
-    public TableColumn<Vuelo, String> tcCodigo, tcOrigen, tcDestino, tcOperadora, tcFecha, tcClase;
-    public Button btReset, btGuardar, btModificar, btEliminar;
+    public TableColumn<Vuelo, String> tcCodigo, tcOrigen, tcDestino, tcOperadora, tcClase;
+    public TableColumn<Vuelo, Date> tcFecha;
+    public Button btReset, btGuardar, btModificar, btEliminar, btFiltrar;
+    public CheckBox chOrigen, chDestino;
     public Label lbEstado;
     public ObservableList<Vuelo> listaVuelos;
     public Image image;
@@ -51,6 +54,7 @@ public class AppController implements Initializable {
 
     private VueloDAO vueloDAO;
     private Optional<ButtonType> action;
+    private Vuelo vueloRecuperado;
 
     public AppController() {
         vueloDAO = new VueloDAO();
@@ -72,21 +76,24 @@ public class AppController implements Initializable {
         cbClase.setItems(items);
         cargarLogo();
         try {
-            cargarTableView();
+            cargarTableView(vueloDAO.listarVuelos());
         } catch (SQLException sqle) {
             sqle.printStackTrace();
         }
     }
 
     @FXML
-    public void resetFormulario(Event event){
+    public void resetFormulario(ActionEvent event){
         limpiarCajas();
-        modoEdicion(true);
+        try {
+            cargarTableView(vueloDAO.listarVuelos());
+        } catch (SQLException sqlException) {
+            sqlException.printStackTrace();
+        }
     }
 
-
     @FXML
-    public void guardarVuelo(Event event) throws SQLException{
+    public void guardarVuelo(ActionEvent event) throws SQLException{
         String codigo = tfCodigo.getText();
         if (codigo.equals("")){
             AlertUtils.mostrarError("Debe generar un código para el vuelo");
@@ -96,7 +103,7 @@ public class AppController implements Initializable {
                 String origen = tfOrigen.getText();
                 String destino = tfDestino.getText();
                 String operadora = tfOperadora.getText();
-                String fecha = tfFecha.getText();
+                Date fecha = Date.valueOf(dpFecha.getValue());
                 String clase = cbClase.getSelectionModel().getSelectedItem();
                 Vuelo vuelo = new Vuelo(codigo, origen, destino, operadora, fecha, clase);
                 action = AlertUtils.mostrarConfirmacion("Está seguro de guardar los datos introducidos");
@@ -107,9 +114,8 @@ public class AppController implements Initializable {
                     }
                     vueloDAO.guardarVuelo(vuelo);
                     lbEstado.setText("Registro guardado correctamente");
-                    cargarTableView();
+                    cargarTableView(vueloDAO.listarVuelos());
                     //limpiarCajas();
-                    modoEdicion(false);
                 }
 
         } catch (SQLException sqle) {
@@ -118,7 +124,7 @@ public class AppController implements Initializable {
     }
 
     @FXML
-    public void modificarVuelo(Event event) throws SQLException{
+    public void modificarVuelo(ActionEvent event){
         String codigo = tfCodigo.getText();
         if (codigo.equals("")){
             AlertUtils.mostrarError("Introduzca el código de vuelo que desea modificar");
@@ -128,14 +134,14 @@ public class AppController implements Initializable {
                 String origen = tfOrigen.getText();
                 String destino = tfDestino.getText();
                 String operadora = tfOperadora.getText();
-                String fecha = tfFecha.getText();
+                Date fecha = Date.valueOf(dpFecha.getValue());
                 String clase = cbClase.getSelectionModel().getSelectedItem();
                 Vuelo vuelo = new Vuelo(codigo, origen, destino, operadora, fecha, clase);
                 action = AlertUtils.mostrarConfirmacion("Está seguro de modificar los cambios");
                     if (action.get() == ButtonType.OK){
                     vueloDAO.modificarVuelo(vuelo);
                     lbEstado.setText("El vuelo ha sido modificado correctamente");
-                    cargarTableView();
+                    cargarTableView(vueloDAO.listarVuelos());
                     }
 
         } catch (SQLException sqle) {
@@ -144,9 +150,16 @@ public class AppController implements Initializable {
     }
 
     @FXML
-    public void eliminarVuelo(Event event){
+    public void eliminarVuelo(ActionEvent event){
 
         String codigo = tfCodigo.getText();
+        String origen = tfOrigen.getText();
+        String destino = tfDestino.getText();
+        String operadora = tfOperadora.getText();
+        Date fecha = Date.valueOf(dpFecha.getValue());
+        String clase = cbClase.getSelectionModel().getSelectedItem();
+        Vuelo vuelo1 = new Vuelo(codigo, origen, destino, operadora, fecha, clase);
+        vueloRecuperado = vuelo1;
         if (codigo.equals("")){
             AlertUtils.mostrarError("Introduzca el código del vuelo que desea eliminar");
             return;
@@ -158,10 +171,65 @@ public class AppController implements Initializable {
                     vueloDAO.eliminarVuelo(vuelo);
                     lbEstado.setText("El vuelo ha sido eliminado correctamente");
                 }
-                cargarTableView();
+                cargarTableView(vueloDAO.listarVuelos());
         } catch (SQLException sqle){
             AlertUtils.mostrarError("No se ha podido eliminar el vuelo");
         }
+    }
+
+    @FXML
+    public void borrarBBDD(ActionEvent event){
+        try {
+            action = AlertUtils.mostrarConfirmacion("Se borrarán todos los datos de la Base de Datos. Está" +
+                    " seguro de continuar.");
+            if (action.get() == ButtonType.OK){
+                vueloDAO.borrarDatos();
+                cargarTableView(vueloDAO.listarVuelos());
+            }
+
+        } catch (SQLException sqlException) {
+            sqlException.printStackTrace();
+        }
+    }
+
+    @FXML
+    public void recuperarVuelo(ActionEvent event){
+        try {
+            action = AlertUtils.mostrarConfirmacion("El vuelo eliminado se cargará de nuevo en la Base de Datos." +
+                    " Está seguro?");
+            if (action.get() == ButtonType.OK){
+                vueloDAO.guardarVuelo(vueloRecuperado);
+                lbEstado.setText("Vuelo recuperado");
+            }
+            cargarTableView(vueloDAO.listarVuelos());
+
+        } catch (SQLException sqlException) {
+            AlertUtils.mostrarError("Lo sentimos. El vuelo no se ha podido recuperar");
+        }
+
+    }
+
+    @FXML
+    public void filtrar(ActionEvent event) {
+            try {
+                String origen = tfFiltroOrigen.getText().toUpperCase();
+                String destino = tfFiltroDestino.getText().toUpperCase();
+                if (chOrigen.isSelected() && chDestino.isSelected()){
+                    cargarTableView(vueloDAO.filtrarOrigenDestino(origen,destino));
+                }
+                else if(chOrigen.isSelected()) {
+                    cargarTableView(vueloDAO.filtrarOrigen(origen));
+                }
+                else if(chDestino.isSelected()){
+                    cargarTableView(vueloDAO.filtrarDestino(destino));
+                }
+                else if(!chOrigen.isSelected() && !chDestino.isSelected()){
+                    AlertUtils.mostrarError("Debe seleccionar la opción que desea filtrar");
+                }
+
+            } catch (SQLException sqle){
+                AlertUtils.mostrarError("Error al filtrar consulta");
+            }
     }
 
     @FXML
@@ -170,14 +238,26 @@ public class AppController implements Initializable {
         tfOrigen.setText(tvLista.getSelectionModel().selectedItemProperty().getValue().getOrigen());
         tfDestino.setText(tvLista.getSelectionModel().selectedItemProperty().getValue().getDestino());
         tfOperadora.setText(tvLista.getSelectionModel().selectedItemProperty().getValue().getOperadora());
-        tfFecha.setText(tvLista.getSelectionModel().selectedItemProperty().getValue().getFecha());
+        dpFecha.setValue(tvLista.getSelectionModel().selectedItemProperty().getValue().getFecha().toLocalDate());
         cbClase.setValue(String.valueOf(tvLista.getSelectionModel().selectedItemProperty().getValue().getClase()));
+
+        /*tvLista.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Vuelo>() {
+
+            @Override
+            public void changed(ObservableValue<? extends Vuelo> observableValue, Vuelo oldValue, Vuelo newValue) {
+                tfCodigo.setText(newValue.getCodigo());
+                tfOrigen.setText(newValue.getOrigen());
+                tfDestino.setText(newValue.getDestino());
+                tfOperadora.setText(newValue.getOperadora());
+                dpFecha.setValue(newValue.getFecha().toLocalDate());
+                cbClase.setValue(newValue.getClase());
+            }
+        });*/
         cargarLogo();
     }
 
     @FXML
     public void importar(ActionEvent event){
-
 
     }
 
@@ -201,13 +281,13 @@ public class AppController implements Initializable {
         } catch (SQLException sqle){
             AlertUtils.mostrarError("ERROR al importar los datos");
         } catch (IOException ioe) {
-            AlertUtils.mostrarError("Errror al exportar los datos");
+            AlertUtils.mostrarError("ERROR al importar los datos");
         }
 
     }
 
     @FXML
-    private void condicionalSwitch(String name){
+    private void selectorLogo(String name){
         switch (name){
             case "iberia":
                 image = new Image(R.getImage("iberia.png"));
@@ -260,14 +340,14 @@ public class AppController implements Initializable {
     private void cargarLogo(){
 
         String logo = tfOperadora.getText().toLowerCase();
-        condicionalSwitch(logo);
+        selectorLogo(logo);
 
         tfOperadora.focusedProperty().addListener(new ChangeListener<Boolean>() {
             @Override
             public void changed(ObservableValue<? extends Boolean> observableValue, Boolean oldValue, Boolean newValue) {
                 if (oldValue){
                     String logo = tfOperadora.getText().toLowerCase();
-                    condicionalSwitch(logo);
+                    selectorLogo(logo);
                 }
             }
         });
@@ -279,13 +359,13 @@ public class AppController implements Initializable {
         tcOrigen.setCellValueFactory(new PropertyValueFactory<Vuelo, String>("origen"));
         tcDestino.setCellValueFactory(new PropertyValueFactory<Vuelo, String>("destino"));
         tcOperadora.setCellValueFactory(new PropertyValueFactory<Vuelo, String>("operadora"));
-        tcFecha.setCellValueFactory(new PropertyValueFactory<Vuelo, String>("fecha"));
+        tcFecha.setCellValueFactory(new PropertyValueFactory<Vuelo, Date>("fecha"));
         tcClase.setCellValueFactory(new PropertyValueFactory<Vuelo, String>("clase"));
     }
 
     @FXML
-    private void cargarTableView() throws SQLException{
-        listaVuelos = FXCollections.observableArrayList(vueloDAO.listarVuelos());
+    private void cargarTableView(List<Vuelo> list) throws SQLException{
+        listaVuelos = FXCollections.observableArrayList(list);
         tvLista.setItems(listaVuelos);
         configTableView();
     }
@@ -303,10 +383,15 @@ public class AppController implements Initializable {
         tfOrigen.setText("");
         tfDestino.setText("");
         tfOperadora.setText("");
-        tfFecha.setText("");
+        dpFecha.setValue(null);
         cbClase.setValue("<Seleccione Tipo>");
         lbEstado.setText("");
-        imageLogo.setImage(null);
+        tfFiltroOrigen.setText("");
+        tfFiltroDestino.setText("");
+        chOrigen.selectedProperty().set(false);
+        chDestino.selectedProperty().set(false);
+        image = new Image(R.getImage("avion.png"));
+        imageLogo.setImage(image);
     }
 
     private void modoEdicion (boolean activar){

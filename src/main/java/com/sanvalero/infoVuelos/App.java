@@ -19,26 +19,17 @@ public class App extends Application {
     }
 
     @Override
-    public void start(Stage stage) throws Exception {
+    public void start(Stage primaryStage) throws Exception {
+
         FXMLLoader loader = new FXMLLoader();
-        loader.setLocation(R.getUI("infoVuelos.fxml"));
-        loader.setController(new AppController());
+        loader.setLocation(R.getUI("index.fxml"));
+        loader.setController(new UsuarioController());
         VBox vBox = loader.load();
 
         Scene scene = new Scene(vBox);
-        stage.setScene(scene);
-        stage.show();
-
-        /*Stage stage1 = new Stage();
-        FXMLLoader loader2 = new FXMLLoader();
-        loader2.setLocation(R.getUI("index.fxml"));
-        loader.setController(new AppController());
-        VBox vBox1 = loader2.load();
-
-        Scene scene2 = new Scene(vBox1);
-        stage1.setScene(scene2);
-        stage1.initModality(Modality.APPLICATION_MODAL);
-        stage1.show();*/
+        primaryStage.setTitle("InfoVuelos");
+        primaryStage.setScene(scene);
+        primaryStage.show();
     }
 
     @Override
