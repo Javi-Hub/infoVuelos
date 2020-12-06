@@ -4,6 +4,7 @@ package com.sanvalero.infoVuelos.domain;
  * Creado por @author: Javier
  * el 03/12/2020
  */
+
 public class Login {
 
     private String usuario;

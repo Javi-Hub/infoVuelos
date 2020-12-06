@@ -1,23 +1,80 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.Cursor?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.effect.DropShadow?>
+<?import javafx.scene.effect.Glow?>
+<?import javafx.scene.effect.Reflection?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.VBox?>
-
+<?import javafx.scene.text.Font?>
 
 <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <AnchorPane prefHeight="402.0" prefWidth="600.0">
+      <AnchorPane prefHeight="402.0" prefWidth="600.0" style="-fx-background-color: #00bcd4;">
          <children>
-            <Label layoutX="266.0" layoutY="98.0" text="Usuario" />
-            <Label layoutX="257.0" layoutY="183.0" text="Contraseña" />
-            <TextField fx:id="tfLoginUsuario" layoutX="206.0" layoutY="132.0" />
-            <Button fx:id="btLogin" layoutX="254.0" layoutY="275.0" mnemonicParsing="false" onAction="#login" text="Login" />
-            <Button fx:id="btVolver" layoutX="255.0" layoutY="327.0" mnemonicParsing="false" onAction="#volver" text="Volver" />
-            <PasswordField fx:id="pfLoginPassword" layoutX="212.0" layoutY="218.0" />
+            <Button fx:id="btVolver" layoutX="27.0" layoutY="25.0" mnemonicParsing="false" onAction="#volver" prefHeight="44.0" prefWidth="47.0" style="-fx-background-color: #01579b;" text="&lt;-" textFill="WHITE">
+               <effect>
+                  <Reflection />
+               </effect>
+               <font>
+                  <Font name="Calibri Bold" size="24.0" />
+               </font>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor></Button>
+            <AnchorPane layoutX="142.0" layoutY="29.0" prefHeight="342.0" prefWidth="330.0" style="-fx-background-color: #ff7043;">
+               <children>
+                  <Label layoutX="119.0" layoutY="41.0" text="Usuario" textFill="WHITE">
+                     <font>
+                        <Font name="Calibri Bold" size="24.0" />
+                     </font>
+                  </Label>
+                  <TextField fx:id="tfLoginUsuario" layoutX="21.0" layoutY="78.0" prefHeight="37.0" prefWidth="289.0" style="-fx-text-fill: #0277bd;">
+                     <font>
+                        <Font name="Calibri Bold" size="20.0" />
+                     </font>
+                     <effect>
+                        <Glow>
+                           <input>
+                              <DropShadow />
+                           </input>
+                        </Glow>
+                     </effect>
+                  </TextField>
+                  <Label layoutX="101.0" layoutY="134.0" text="Contraseña" textFill="WHITE">
+                     <font>
+                        <Font name="Calibri Bold" size="24.0" />
+                     </font>
+                  </Label>
+                  <PasswordField fx:id="pfLoginPassword" layoutX="19.0" layoutY="171.0" prefHeight="37.0" prefWidth="289.0" style="-fx-text-fill: #0277bd;">
+                     <font>
+                        <Font name="Calibri Bold" size="20.0" />
+                     </font>
+                     <effect>
+                        <Glow>
+                           <input>
+                              <DropShadow />
+                           </input>
+                        </Glow>
+                     </effect>
+                  </PasswordField>
+                  <Button fx:id="btLogin" layoutX="112.0" layoutY="239.0" mnemonicParsing="false" onAction="#login" prefHeight="44.0" prefWidth="104.0" style="-fx-background-color: #f44336;" text="Login" textFill="WHITE">
+                     <font>
+                        <Font name="Calibri" size="24.0" />
+                     </font>
+                     <effect>
+                        <Reflection />
+                     </effect>
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor>
+                  </Button>
+               </children>
+            </AnchorPane>
          </children>
       </AnchorPane>
    </children>

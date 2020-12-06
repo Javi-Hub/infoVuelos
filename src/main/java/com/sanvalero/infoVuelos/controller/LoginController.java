@@ -1,5 +1,4 @@
-package com.sanvalero.infoVuelos;
-
+package com.sanvalero.infoVuelos.controller;
 
 import com.sanvalero.infoVuelos.DAO.LoginDAO;
 import com.sanvalero.infoVuelos.domain.Login;
@@ -86,8 +85,8 @@ public class LoginController {
 
     public void cerrarVentana(ActionEvent event){
         Node source = (Node) event.getSource();
-        Stage stage1 = (Stage) source.getScene().getWindow();
-        stage1.close();
+        Stage stage = (Stage) source.getScene().getWindow();
+        stage.close();
     }
 
 

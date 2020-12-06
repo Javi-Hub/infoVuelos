@@ -1,5 +1,7 @@
 package com.sanvalero.infoVuelos;
 
+import com.sanvalero.infoVuelos.controller.AppController;
+import com.sanvalero.infoVuelos.controller.UsuarioController;
 import com.sanvalero.infoVuelos.util.R;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -20,16 +22,16 @@ public class App extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-
+        // Cargar la ventana de inicio para registro de usuario o loggear usuario
         FXMLLoader loader = new FXMLLoader();
         loader.setLocation(R.getUI("index.fxml"));
         loader.setController(new UsuarioController());
         VBox vBox = loader.load();
-
-        Scene scene = new Scene(vBox);
         primaryStage.setTitle("InfoVuelos");
+        Scene scene = new Scene(vBox);
         primaryStage.setScene(scene);
         primaryStage.show();
+
     }
 
     @Override

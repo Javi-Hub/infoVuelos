@@ -20,10 +20,11 @@ public class VueloDAO extends BaseDAO{
     public final String MODIFICAR = "UPDATE vuelos SET origen = ?, destino = ?, operadora = ?, fecha = ?, clase = ? WHERE codigo = ?";
     public final String ELIMINAR = "DELETE FROM vuelos WHERE codigo = ?";
     public final String EXISTE = "SELECT * FROM vuelos WHERE codigo = ?";
-    public final String LISTAR_VUELOS = "SELECT * FROM vuelos ORDER BY operadora";
+    public final String LISTAR_VUELOS = "SELECT * FROM vuelos ORDER BY fecha";
     public final String FILTRO_ORIGEN = "SELECT * FROM vuelos WHERE UPPER(origen) = ?";
     public final String FILTRO_DESTINO = "SELECT * FROM vuelos WHERE UPPER(destino) = ?";
     public final String FILTRO_ORIGEN_DESTINO = "SELECT * FROM vuelos WHERE UPPER(origen) = ? AND UPPER(destino) = ?";
+    public final String FILTRO_CODIGO = "SELECT * FROM vuelos WHERE UPPER(codigo) = ?";
     public final String BORRAR_DATOS = "TRUNCATE TABLE vuelos";
 
     public void guardarVuelo(Vuelo vuelo)throws SQLException{
@@ -128,6 +129,26 @@ public class VueloDAO extends BaseDAO{
             lista.add(vuelo);
         }
         return  lista;
+    }
+
+    public List<Vuelo> filtrarCodigo(String codigo) throws SQLException {
+        sentencia = conexion.prepareStatement(FILTRO_CODIGO);
+        sentencia.setString(1, codigo);
+        resultado = sentencia.executeQuery();
+        List<Vuelo> lista = new ArrayList<>();
+        while (resultado.next()){
+            Vuelo vuelo = new Vuelo(
+                    resultado.getString(1),
+                    resultado.getString(2),
+                    resultado.getString(3),
+                    resultado.getString(4),
+                    resultado.getDate(5),
+                    resultado.getString(6)
+            );
+            lista.add(vuelo);
+        }
+
+        return lista;
     }
 
 

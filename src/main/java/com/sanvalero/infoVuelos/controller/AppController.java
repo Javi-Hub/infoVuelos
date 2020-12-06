@@ -1,9 +1,11 @@
-package com.sanvalero.infoVuelos;
+package com.sanvalero.infoVuelos.controller;
 
 import com.sanvalero.infoVuelos.DAO.VueloDAO;
 import com.sanvalero.infoVuelos.domain.Vuelo;
 import com.sanvalero.infoVuelos.util.AlertUtils;
 import com.sanvalero.infoVuelos.util.R;
+import com.sun.prism.shader.DrawPgram_Color_AlphaTest_Loader;
+import javafx.animation.PauseTransition;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -11,23 +13,31 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import javafx.util.Duration;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+
 import java.net.URL;
 import java.sql.SQLException;
 import java.sql.Date;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -38,21 +48,21 @@ import java.util.ResourceBundle;
  */
 public class AppController implements Initializable {
 
-    public TextField tfCodigo, tfOrigen, tfDestino, tfOperadora, tfFiltroOrigen, tfFiltroDestino, tfFiltroFecha;
+    public TextField tfCodigo, tfOrigen, tfDestino, tfOperadora, tfFiltroOrigen, tfFiltroDestino, tfFiltroCodigo;
     public ComboBox<String> cbClase;
     public DatePicker dpFecha;
 
     public TableView<Vuelo> tvLista;
     public TableColumn<Vuelo, String> tcCodigo, tcOrigen, tcDestino, tcOperadora, tcClase;
     public TableColumn<Vuelo, Date> tcFecha;
-    public Button btReset, btGuardar, btModificar, btEliminar, btFiltrar;
-    public CheckBox chOrigen, chDestino;
+    public Button btNuevo, btReset, btGuardar, btModificar, btEliminar, btFiltrar, btRecuperar, btInsertarVuelo;
+    public CheckBox chOrigen, chDestino, chCodigo;
     public Label lbEstado;
     public ObservableList<Vuelo> listaVuelos;
     public Image image;
     public ImageView imageLogo;
 
-    private VueloDAO vueloDAO;
+    private final VueloDAO vueloDAO;
     private Optional<ButtonType> action;
     private Vuelo vueloRecuperado;
 
@@ -72,11 +82,13 @@ public class AppController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        ObservableList<String> items = FXCollections.observableArrayList("<Seleccione Tipo>","First Class", "Bussiness", "Premium Economy", "Economy" );
-        cbClase.setItems(items);
-        cargarLogo();
         try {
+            ObservableList<String> items = FXCollections.observableArrayList("Seleccione Tipo","First Class", "Bussiness", "Premium Economy", "Economy" );
+            cbClase.setItems(items);
+            modoReset(true);
+            cargarLogo();
             cargarTableView(vueloDAO.listarVuelos());
+
         } catch (SQLException sqle) {
             sqle.printStackTrace();
         }
@@ -85,6 +97,7 @@ public class AppController implements Initializable {
     @FXML
     public void resetFormulario(ActionEvent event){
         limpiarCajas();
+        modoReset(true);
         try {
             cargarTableView(vueloDAO.listarVuelos());
         } catch (SQLException sqlException) {
@@ -93,9 +106,9 @@ public class AppController implements Initializable {
     }
 
     @FXML
-    public void guardarVuelo(ActionEvent event) throws SQLException{
+    public void guardarVuelo(ActionEvent event) {
         String codigo = tfCodigo.getText();
-        if (codigo.equals("")){
+        if (codigo.equals(null)){
             AlertUtils.mostrarError("Debe generar un código para el vuelo");
             return;
         }
@@ -104,6 +117,7 @@ public class AppController implements Initializable {
                 String destino = tfDestino.getText();
                 String operadora = tfOperadora.getText();
                 Date fecha = Date.valueOf(dpFecha.getValue());
+                System.out.println(fecha);
                 String clase = cbClase.getSelectionModel().getSelectedItem();
                 Vuelo vuelo = new Vuelo(codigo, origen, destino, operadora, fecha, clase);
                 action = AlertUtils.mostrarConfirmacion("Está seguro de guardar los datos introducidos");
@@ -113,12 +127,12 @@ public class AppController implements Initializable {
                         return;
                     }
                     vueloDAO.guardarVuelo(vuelo);
-                    lbEstado.setText("Registro guardado correctamente");
+                    lbEstado.setText("* Registro guardado correctamente");
                     cargarTableView(vueloDAO.listarVuelos());
-                    //limpiarCajas();
+                    mostrarLabelTemporal();
                 }
 
-        } catch (SQLException sqle) {
+        } catch (SQLException | RuntimeException sqle) {
                 AlertUtils.mostrarError("ERROR al guardar el vuelo");
         }
     }
@@ -140,8 +154,9 @@ public class AppController implements Initializable {
                 action = AlertUtils.mostrarConfirmacion("Está seguro de modificar los cambios");
                     if (action.get() == ButtonType.OK){
                     vueloDAO.modificarVuelo(vuelo);
-                    lbEstado.setText("El vuelo ha sido modificado correctamente");
+                    lbEstado.setText("* Registro modificado correctamente");
                     cargarTableView(vueloDAO.listarVuelos());
+                    mostrarLabelTemporal();
                     }
 
         } catch (SQLException sqle) {
@@ -150,31 +165,41 @@ public class AppController implements Initializable {
     }
 
     @FXML
-    public void eliminarVuelo(ActionEvent event){
-
+    public void eliminarVuelo(ActionEvent event) throws SQLException, InterruptedException {
         String codigo = tfCodigo.getText();
         String origen = tfOrigen.getText();
         String destino = tfDestino.getText();
         String operadora = tfOperadora.getText();
         Date fecha = Date.valueOf(dpFecha.getValue());
         String clase = cbClase.getSelectionModel().getSelectedItem();
-        Vuelo vuelo1 = new Vuelo(codigo, origen, destino, operadora, fecha, clase);
-        vueloRecuperado = vuelo1;
+        Vuelo vueloR = new Vuelo(codigo, origen, destino, operadora, fecha, clase);
+        vueloRecuperado = vueloR;
         if (codigo.equals("")){
             AlertUtils.mostrarError("Introduzca el código del vuelo que desea eliminar");
             return;
         }
+
         try{
                 Vuelo vuelo = new Vuelo(codigo);
                 action = AlertUtils.mostrarConfirmacion("¿Está seguro de eliminar el registro seleccionado?");
                 if (action.get() == ButtonType.OK){
                     vueloDAO.eliminarVuelo(vuelo);
-                    lbEstado.setText("El vuelo ha sido eliminado correctamente");
+                    lbEstado.setText("* Registro eliminado correctamente");
+                    btRecuperar.setDisable(false);
+                    mostrarLabelTemporal();
                 }
                 cargarTableView(vueloDAO.listarVuelos());
+
         } catch (SQLException sqle){
             AlertUtils.mostrarError("No se ha podido eliminar el vuelo");
         }
+    }
+
+    public void mostrarLabelTemporal(){
+        lbEstado.setVisible(true);
+        PauseTransition visiblePause = new PauseTransition(Duration.seconds(3));
+        visiblePause.setOnFinished(event -> lbEstado.setVisible(false));
+        visiblePause.play();
     }
 
     @FXML
@@ -184,11 +209,13 @@ public class AppController implements Initializable {
                     " seguro de continuar.");
             if (action.get() == ButtonType.OK){
                 vueloDAO.borrarDatos();
-                cargarTableView(vueloDAO.listarVuelos());
+                lbEstado.setText("* BBDD elimada");
+                mostrarLabelTemporal();
             }
+            cargarTableView(vueloDAO.listarVuelos());
 
         } catch (SQLException sqlException) {
-            sqlException.printStackTrace();
+            AlertUtils.mostrarError("ERROR al eliminar la BBDD");
         }
     }
 
@@ -199,7 +226,8 @@ public class AppController implements Initializable {
                     " Está seguro?");
             if (action.get() == ButtonType.OK){
                 vueloDAO.guardarVuelo(vueloRecuperado);
-                lbEstado.setText("Vuelo recuperado");
+                lbEstado.setText("* Vuelo recuperado");
+                mostrarLabelTemporal();
             }
             cargarTableView(vueloDAO.listarVuelos());
 
@@ -214,6 +242,7 @@ public class AppController implements Initializable {
             try {
                 String origen = tfFiltroOrigen.getText().toUpperCase();
                 String destino = tfFiltroDestino.getText().toUpperCase();
+                String codigo = tfFiltroCodigo.getText().toUpperCase();
                 if (chOrigen.isSelected() && chDestino.isSelected()){
                     cargarTableView(vueloDAO.filtrarOrigenDestino(origen,destino));
                 }
@@ -222,6 +251,9 @@ public class AppController implements Initializable {
                 }
                 else if(chDestino.isSelected()){
                     cargarTableView(vueloDAO.filtrarDestino(destino));
+                }
+                else if(chCodigo.isSelected()){
+                    cargarTableView(vueloDAO.filtrarCodigo(codigo));
                 }
                 else if(!chOrigen.isSelected() && !chDestino.isSelected()){
                     AlertUtils.mostrarError("Debe seleccionar la opción que desea filtrar");
@@ -232,6 +264,7 @@ public class AppController implements Initializable {
             }
     }
 
+
     @FXML
     public void obtenerVuelos(Event event){
         tfCodigo.setText(tvLista.getSelectionModel().selectedItemProperty().getValue().getCodigo());
@@ -240,25 +273,8 @@ public class AppController implements Initializable {
         tfOperadora.setText(tvLista.getSelectionModel().selectedItemProperty().getValue().getOperadora());
         dpFecha.setValue(tvLista.getSelectionModel().selectedItemProperty().getValue().getFecha().toLocalDate());
         cbClase.setValue(String.valueOf(tvLista.getSelectionModel().selectedItemProperty().getValue().getClase()));
-
-        /*tvLista.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Vuelo>() {
-
-            @Override
-            public void changed(ObservableValue<? extends Vuelo> observableValue, Vuelo oldValue, Vuelo newValue) {
-                tfCodigo.setText(newValue.getCodigo());
-                tfOrigen.setText(newValue.getOrigen());
-                tfDestino.setText(newValue.getDestino());
-                tfOperadora.setText(newValue.getOperadora());
-                dpFecha.setValue(newValue.getFecha().toLocalDate());
-                cbClase.setValue(newValue.getClase());
-            }
-        });*/
+        modoModificar(true);
         cargarLogo();
-    }
-
-    @FXML
-    public void importar(ActionEvent event){
-
     }
 
     @FXML
@@ -267,10 +283,6 @@ public class AppController implements Initializable {
             FileChooser fileChooser = new FileChooser();
             File fichero = fileChooser.showSaveDialog(null);
             FileWriter fileWriter = new FileWriter(fichero);
-
-            /*CSVPrinter printer = new CSVPrinter(fileWriter,
-                    CSVFormat.newFormat(';').withHeader("Código", "Origen", "Destino", "Operadora", "Fecha", "Clase"));*/
-
             CSVPrinter printer = CSVFormat.TDF.withHeader("Código;", "Origen;", "Destino;", "Operadora;", "Fecha;", "Clase;").print(fileWriter);
             List<Vuelo> vuelos = vueloDAO.listarVuelos();
             for (Vuelo vuelo : vuelos) {
@@ -341,7 +353,6 @@ public class AppController implements Initializable {
 
         String logo = tfOperadora.getText().toLowerCase();
         selectorLogo(logo);
-
         tfOperadora.focusedProperty().addListener(new ChangeListener<Boolean>() {
             @Override
             public void changed(ObservableValue<? extends Boolean> observableValue, Boolean oldValue, Boolean newValue) {
@@ -383,8 +394,8 @@ public class AppController implements Initializable {
         tfOrigen.setText("");
         tfDestino.setText("");
         tfOperadora.setText("");
-        dpFecha.setValue(null);
-        cbClase.setValue("<Seleccione Tipo>");
+        dpFecha.setValue(LocalDate.now());
+        cbClase.setValue("Seleccione Tipo");
         lbEstado.setText("");
         tfFiltroOrigen.setText("");
         tfFiltroDestino.setText("");
@@ -395,11 +406,79 @@ public class AppController implements Initializable {
     }
 
     private void modoEdicion (boolean activar){
-        btReset.setDisable(activar);
+        btNuevo.setDisable(!activar);
+        btReset.setDisable(!activar);
         btGuardar.setDisable(!activar);
         btModificar.setDisable(activar);
         btEliminar.setDisable(activar);
+        btFiltrar.setDisable(activar);
+        btRecuperar.setDisable(activar);
         tfCodigo.requestFocus();
+        tvLista.setDisable(activar);
+        tfCodigo.setEditable(activar);
+        tfOrigen.setEditable(activar);
+        tfDestino.setEditable(activar);
+        tfOperadora.setEditable(activar);
+        cbClase.setEditable(activar);
+        tfFiltroCodigo.setEditable(!activar);
+        tfFiltroOrigen.setEditable(!activar);
+        tfFiltroDestino.setEditable(!activar);
+        chCodigo.setDisable(activar);
+        chDestino.setDisable(activar);
+        chOrigen.setDisable(activar);
     }
+
+    private void modoReset(boolean activar){
+        btNuevo.setDisable(activar);
+        btReset.setDisable(!activar);
+        btGuardar.setDisable(activar);
+        btModificar.setDisable(!activar);
+        btEliminar.setDisable(!activar);
+        btRecuperar.setDisable(!activar);
+        btFiltrar.setDisable(!activar);
+        dpFecha.setEditable(!activar);
+        tvLista.setDisable(!activar);
+        tfCodigo.setEditable(!activar);
+        tfOrigen.setEditable(!activar);
+        tfDestino.setEditable(!activar);
+        tfOperadora.setEditable(!activar);
+        cbClase.setEditable(!activar);
+        chCodigo.setDisable(!activar);
+        chDestino.setDisable(!activar);
+        chOrigen.setDisable(!activar);
+        tfFiltroCodigo.setEditable(activar);
+        tfFiltroOrigen.setEditable(activar);
+        tfFiltroDestino.setEditable(activar);
+    }
+
+    private void modoModificar (boolean activar){
+        btNuevo.setDisable(activar);
+        btReset.setDisable(!activar);
+        btGuardar.setDisable(activar);
+        btModificar.setDisable(!activar);
+        btEliminar.setDisable(!activar);
+        btFiltrar.setDisable(activar);
+        btRecuperar.setDisable(activar);
+        tfCodigo.requestFocus();
+        tvLista.setDisable(!activar);
+        tfCodigo.setEditable(!activar);
+        tfOrigen.setEditable(activar);
+        tfDestino.setEditable(activar);
+        tfOperadora.setEditable(activar);
+        cbClase.setEditable(activar);
+        tfFiltroCodigo.setEditable(!activar);
+        tfFiltroOrigen.setEditable(!activar);
+        tfFiltroDestino.setEditable(!activar);
+        chCodigo.setDisable(activar);
+        chDestino.setDisable(activar);
+        chOrigen.setDisable(activar);
+    }
+
+    @FXML
+    public void insertarVuelo(ActionEvent event){
+        modoEdicion(true);
+        limpiarCajas();
+    }
+
 
 }

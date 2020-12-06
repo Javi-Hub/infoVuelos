@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.Cursor?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ComboBox?>
@@ -12,140 +13,327 @@
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.effect.DropShadow?>
+<?import javafx.scene.effect.Glow?>
+<?import javafx.scene.effect.InnerShadow?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.Font?>
 
-<VBox prefHeight="862.0" prefWidth="1216.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<VBox prefHeight="903.0" prefWidth="1260.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
   <children>
     <MenuBar VBox.vgrow="NEVER">
       <menus>
         <Menu mnemonicParsing="false" text="File">
           <items>
             <MenuItem fx:id="miExportar" mnemonicParsing="false" onAction="#exportar" text="Export" />
-            <MenuItem fx:id="miImportar" mnemonicParsing="false" onAction="#importar" text="Import" />
                   <MenuItem fx:id="borrarBBDD" mnemonicParsing="false" onAction="#borrarBBDD" text="Borrar BBDD" />
-            <MenuItem mnemonicParsing="false" text="Quit" />
           </items>
         </Menu>
       </menus>
     </MenuBar>
-    <AnchorPane maxHeight="-1.0" maxWidth="-1.0" prefHeight="629.0" prefWidth="992.0" style="-fx-background-color: #689F38;" VBox.vgrow="ALWAYS">
+    <AnchorPane maxHeight="-1.0" maxWidth="-1.0" prefHeight="629.0" prefWidth="992.0" style="-fx-background-color: #00bcd4;" VBox.vgrow="ALWAYS">
          <children>
-            <Label fx:id="lbCodigo" layoutX="19.0" layoutY="28.0" text="Código">
+            <Label fx:id="lbCodigo" layoutX="21.0" layoutY="34.0" text="Código" textFill="WHITE">
                <font>
-                  <Font name="Lato Bold" size="18.0" />
+                  <Font name="Calibri Bold" size="20.0" />
                </font></Label>
-             <Button fx:id="btNuevo" layoutX="279.0" layoutY="26.0" mnemonicParsing="false" onAction="#nuevoCodigo" prefHeight="27.0" prefWidth="149.0" text=" Generar Código" textFill="#f50909">
+             <Button fx:id="btNuevo" layoutX="279.0" layoutY="28.0" mnemonicParsing="false" onAction="#nuevoCodigo" prefHeight="27.0" prefWidth="149.0" style="-fx-background-color: #ff7043;" text=" Generar Código" textFill="WHITE">
                  <font>
-                     <Font name="Consolas Bold" size="14.0" />
+                     <Font name="Calibri Bold" size="15.0" />
                  </font>
+               <effect>
+                  <Glow>
+                     <input>
+                        <DropShadow />
+                     </input>
+                  </Glow>
+               </effect>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
              </Button>
-            <Label fx:id="lbOrigen" layoutX="19.0" layoutY="68.0" text="Origen">
+            <Label fx:id="lbOrigen" layoutX="21.0" layoutY="80.0" text="Origen" textFill="WHITE">
                <font>
-                  <Font name="Lato Bold" size="18.0" />
+                  <Font name="Calibri Bold" size="20.0" />
                </font></Label>
-            <Label fx:id="lbDestino" layoutX="20.0" layoutY="116.0" text="Destino">
+            <Label fx:id="lbDestino" layoutX="18.0" layoutY="129.0" text="Destino" textFill="WHITE">
                <font>
-                  <Font name="Lato Bold" size="18.0" />
+                  <Font name="Calibri Bold" size="20.0" />
                </font></Label>
-            <Label fx:id="lbOperadora" layoutX="17.0" layoutY="160.0" text="Operadora">
+            <Label fx:id="lbOperadora" layoutX="17.0" layoutY="175.0" text="Operadora" textFill="WHITE">
                <font>
-                  <Font name="Lato Bold" size="18.0" />
+                  <Font name="Calibri Bold" size="20.0" />
                </font></Label>
-            <Label fx:id="lbFecha" layoutX="19.0" layoutY="210.0" text="Fecha">
+            <Label fx:id="lbFecha" layoutX="20.0" layoutY="222.0" text="Fecha" textFill="WHITE">
                <font>
-                  <Font name="Lato Bold" size="18.0" />
+                  <Font name="Calibri Bold" size="20.0" />
                </font></Label>
-            <Label fx:id="lbClase" layoutX="19.0" layoutY="253.0" text="Clase">
+            <Label fx:id="lbClase" layoutX="23.0" layoutY="269.0" text="Clase" textFill="WHITE">
                <font>
-                  <Font name="Lato Bold" size="18.0" />
+                  <Font name="Calibri Bold" size="20.0" />
                </font></Label>
-            <TextField fx:id="tfOrigen" layoutX="119.0" layoutY="67.0" />
-            <TextField fx:id="tfDestino" layoutX="119.0" layoutY="114.0" />
-            <TextField fx:id="tfOperadora" layoutX="119.0" layoutY="159.0" />
-            <ComboBox fx:id="cbClase" layoutX="118.0" layoutY="252.0" prefWidth="150.0" />
+            <TextField fx:id="tfOrigen" alignment="CENTER" layoutX="117.0" layoutY="77.0" prefHeight="28.0" prefWidth="145.0">
+               <font>
+                  <Font name="Calibri Bold" size="16.0" />
+               </font>
+               <effect>
+                  <Glow>
+                     <input>
+                        <DropShadow />
+                     </input>
+                  </Glow>
+               </effect></TextField>
+            <TextField fx:id="tfDestino" alignment="CENTER" layoutX="118.0" layoutY="126.0" prefHeight="28.0" prefWidth="145.0">
+               <font>
+                  <Font name="Calibri Bold" size="16.0" />
+               </font>
+               <effect>
+                  <Glow>
+                     <input>
+                        <DropShadow />
+                     </input>
+                  </Glow>
+               </effect></TextField>
+            <TextField fx:id="tfOperadora" alignment="CENTER" layoutX="117.0" layoutY="174.0" prefHeight="28.0" prefWidth="145.0">
+               <font>
+                  <Font name="Calibri Bold" size="16.0" />
+               </font>
+               <effect>
+                  <Glow>
+                     <input>
+                        <DropShadow />
+                     </input>
+                  </Glow>
+               </effect></TextField>
+            <DatePicker fx:id="dpFecha" layoutX="117.0" layoutY="222.0" prefHeight="28.0" prefWidth="145.0">
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+               <effect>
+                  <Glow>
+                     <input>
+                        <DropShadow />
+                     </input>
+                  </Glow>
+               </effect></DatePicker>
+            <ComboBox fx:id="cbClase" layoutX="117.0" layoutY="269.0" prefHeight="28.0" prefWidth="145.0">
+               <effect>
+                  <Glow>
+                     <input>
+                        <DropShadow />
+                     </input>
+                  </Glow>
+               </effect></ComboBox>
 
-            <Button fx:id="btReset" layoutX="324.0" layoutY="66.0" mnemonicParsing="false" onAction="#resetFormulario" text="Reset">
+            <Button fx:id="btReset" layoutX="308.0" layoutY="73.0" mnemonicParsing="false" onAction="#resetFormulario" prefHeight="28.0" prefWidth="84.0" style="-fx-background-color: #c2185b;" text="Reset" textFill="WHITE">
                <font>
-                  <Font name="Consolas Bold" size="14.0" />
+                  <Font name="Calibri Bold" size="15.0" />
                </font>
                <opaqueInsets>
                   <Insets />
                </opaqueInsets>
+               <effect>
+                  <Glow>
+                     <input>
+                        <DropShadow />
+                     </input></Glow>
+               </effect>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
             </Button>
-            <Button fx:id="btGuardar" layoutX="317.0" layoutY="113.0" mnemonicParsing="false" onAction="#guardarVuelo" text="Guardar">
+            <Button fx:id="btGuardar" layoutX="308.0" layoutY="121.0" mnemonicParsing="false" onAction="#guardarVuelo" prefHeight="28.0" prefWidth="84.0" style="-fx-background-color: #0d47a1;" text="Guardar" textFill="WHITE">
                <font>
-                  <Font name="Consolas Bold" size="14.0" />
+                  <Font name="Calibri Bold" size="15.0" />
                </font>
+               <effect>
+                  <Glow>
+                     <input>
+                        <DropShadow />
+                     </input></Glow>
+               </effect>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
             </Button>
-            <Button fx:id="btModificar" layoutX="309.0" layoutY="158.0" mnemonicParsing="false" onAction="#modificarVuelo" text="Modificar">
+            <Button fx:id="btModificar" layoutX="307.0" layoutY="169.0" mnemonicParsing="false" onAction="#modificarVuelo" prefHeight="28.0" prefWidth="84.0" style="-fx-background-color: #0d47a1;" text="Modificar" textFill="WHITE">
                <font>
-                  <Font name="Consolas Bold" size="14.0" />
+                  <Font name="Calibri Bold" size="15.0" />
                </font>
+               <effect>
+                  <Glow>
+                     <input>
+                        <DropShadow />
+                     </input></Glow>
+               </effect>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
             </Button>
-            <Button fx:id="btEliminar" layoutX="313.0" layoutY="208.0" mnemonicParsing="false" onAction="#eliminarVuelo" text="Eliminar">
+            <Button fx:id="btEliminar" layoutX="308.0" layoutY="219.0" mnemonicParsing="false" onAction="#eliminarVuelo" prefHeight="28.0" prefWidth="84.0" style="-fx-background-color: #0d47a1;" text="Eliminar" textFill="WHITE">
                <font>
-                  <Font name="Consolas Bold" size="14.0" />
+                  <Font name="Calibri Bold" size="15.0" />
                </font>
+               <effect>
+                  <Glow>
+                     <input>
+                        <DropShadow />
+                     </input></Glow>
+               </effect>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
             </Button>
-            <Label fx:id="lbEstado" layoutX="14.0" layoutY="315.0" prefHeight="23.0" prefWidth="407.0" textFill="#0a0a0a">
+            <Label fx:id="lbEstado" layoutX="19.0" layoutY="306.0" prefHeight="23.0" prefWidth="407.0" textFill="#eb6d1e" visible="true">
                <font>
-                  <Font name="Lato Bold" size="18.0" />
-               </font></Label>
-            <TextField fx:id="tfCodigo" layoutX="119.0" layoutY="27.0" style="-fx-alignment: center;" />
-            <TableView fx:id="tvLista" layoutX="438.0" layoutY="15.0" onMouseClicked="#obtenerVuelos" prefHeight="778.0" prefWidth="768.0" style="-fx-background-color: #ffab40;">
+                  <Font name="Calibri Bold" size="14.0" />
+               </font>
+               <effect>
+                  <Glow>
+                     <input>
+                        <DropShadow />
+                     </input>
+                  </Glow>
+               </effect></Label>
+            <TextField fx:id="tfCodigo" alignment="CENTER" layoutX="118.0" layoutY="29.0" prefHeight="28.0" prefWidth="145.0" style="-fx-alignment: center;">
+               <font>
+                  <Font name="Calibri Bold" size="16.0" />
+               </font>
+               <effect>
+                  <Glow>
+                     <input>
+                        <DropShadow />
+                     </input>
+                  </Glow>
+               </effect></TextField>
+            <TableView fx:id="tvLista" layoutX="442.0" layoutY="91.0" onMouseClicked="#obtenerVuelos" prefHeight="774.0" prefWidth="807.0" style="-fx-background-color: #ff7043;">
               <columns>
-                <TableColumn fx:id="tcCodigo" prefWidth="76.0" style="-fx-alignment: center; -fx-font-family: Lato; -fx-font-size: 17;" text="Código" />
-                <TableColumn fx:id="tcOrigen" prefWidth="136.0" style="-fx-alignment: center; -fx-font-family: Lato; -fx-font-size: 17;" text="Origen" />
-                  <TableColumn fx:id="tcDestino" prefWidth="124.0" style="-fx-alignment: center; -fx-font-family: Lato; -fx-font-size: 17;" text="Destino" />
-                  <TableColumn fx:id="tcOperadora" prefWidth="131.0" style="-fx-alignment: center; -fx-font-family: Lato; -fx-font-size: 17;" text="Operadora" />
-                  <TableColumn fx:id="tcFecha" prefWidth="111.0" style="-fx-alignment: center; -fx-font-family: Lato; -fx-font-size: 17;" text="Fecha" />
-                  <TableColumn fx:id="tcClase" prefWidth="189.0" style="-fx-alignment: center; -fx-font-family: Lato; -fx-font-size: 17;" text="Clase" />
+                <TableColumn fx:id="tcCodigo" prefWidth="94.0" style="-fx-alignment: center; -fx-font-family: Lato; -fx-font-size: 17;" text="Código" />
+                <TableColumn fx:id="tcOrigen" prefWidth="134.0" style="-fx-alignment: center; -fx-font-family: Lato; -fx-font-size: 17;" text="Origen" />
+                  <TableColumn fx:id="tcDestino" prefWidth="121.0" style="-fx-alignment: center; -fx-font-family: Lato; -fx-font-size: 17;" text="Destino" />
+                  <TableColumn fx:id="tcOperadora" prefWidth="144.0" style="-fx-alignment: center; -fx-font-family: Lato; -fx-font-size: 17;" text="Operadora" />
+                  <TableColumn fx:id="tcFecha" prefWidth="134.0" style="-fx-alignment: center; -fx-font-family: Lato; -fx-font-size: 17;" text="Fecha" />
+                  <TableColumn fx:id="tcClase" prefWidth="179.0" style="-fx-alignment: center; -fx-font-family: Lato; -fx-font-size: 17;" text="Clase" />
               </columns>
+               <effect>
+                  <Glow>
+                     <input>
+                        <DropShadow />
+                     </input>
+                  </Glow>
+               </effect>
             </TableView>
-            <ImageView fx:id="imageLogo" fitHeight="337.0" fitWidth="407.0" layoutX="19.0" layoutY="486.0" nodeOrientation="INHERIT" opacity="0.73" pickOnBounds="true" preserveRatio="true" />
-            <Button fx:id="btFiltrar" layoutX="165.0" layoutY="452.0" mnemonicParsing="false" onAction="#filtrar" text="Filtrar">
+            <ImageView fx:id="imageLogo" fitHeight="318.0" fitWidth="383.0" layoutX="45.0" layoutY="527.0" nodeOrientation="INHERIT" opacity="0.73" pickOnBounds="true" preserveRatio="true" />
+            <Button fx:id="btFiltrar" layoutX="168.0" layoutY="458.0" mnemonicParsing="false" onAction="#filtrar" prefHeight="41.0" prefWidth="84.0" style="-fx-background-color: #0d47a1;" text="Filtrar" textFill="WHITE">
                <font>
-                  <Font name="Consolas Bold" size="14.0" />
+                  <Font name="Calibri Bold" size="18.0" />
                </font>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+               <effect>
+                  <Glow>
+                     <input>
+                        <DropShadow />
+                     </input>
+                  </Glow>
+               </effect>
             </Button>
-            <Label layoutX="165.0" layoutY="353.0" text="Filtro">
+            <Label layoutX="171.0" layoutY="335.0" text="Filtro" textFill="WHITE">
                <font>
-                  <Font name="Lato Bold" size="24.0" />
+                  <Font name="Calibri Bold" size="36.0" />
                </font>
             </Label>
-            <TextField fx:id="tfFiltroOrigen" layoutX="19.0" layoutY="419.0" prefHeight="25.0" prefWidth="122.0" />
-            <TextField fx:id="tfFiltroDestino" layoutX="161.0" layoutY="419.0" prefHeight="25.0" prefWidth="135.0" />
-            <TextField fx:id="tfFiltroFecha" layoutX="314.0" layoutY="419.0" prefHeight="25.0" prefWidth="114.0" />
-            <CheckBox fx:id="chOrigen" layoutX="48.0" layoutY="396.0" mnemonicParsing="false" text="Origen">
+            <TextField fx:id="tfFiltroOrigen" alignment="CENTER" layoutX="150.0" layoutY="411.0" prefHeight="28.0" prefWidth="122.0">
+               <font>
+                  <Font name="Calibri Bold" size="16.0" />
+               </font>
+               <effect>
+                  <Glow>
+                     <input>
+                        <DropShadow />
+                     </input>
+                  </Glow>
+               </effect></TextField>
+            <TextField fx:id="tfFiltroDestino" alignment="CENTER" layoutX="293.0" layoutY="410.0" prefHeight="28.0" prefWidth="135.0">
+               <font>
+                  <Font name="Calibri Bold" size="16.0" />
+               </font>
+               <effect>
+                  <Glow>
+                     <input>
+                        <DropShadow />
+                     </input>
+                  </Glow>
+               </effect></TextField>
+            <TextField fx:id="tfFiltroCodigo" alignment="CENTER" layoutX="11.0" layoutY="411.0" prefHeight="28.0" prefWidth="122.0">
+               <font>
+                  <Font name="Calibri Bold" size="16.0" />
+               </font>
+               <effect>
+                  <Glow>
+                     <input>
+                        <DropShadow />
+                     </input>
+                  </Glow>
+               </effect></TextField>
+            <CheckBox fx:id="chOrigen" layoutX="177.0" layoutY="384.0" mnemonicParsing="false" text="Origen">
                <font>
                   <Font name="Lato Bold" size="14.0" />
                </font>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
             </CheckBox>
-            <CheckBox fx:id="chDestino" layoutX="192.0" layoutY="396.0" mnemonicParsing="false" text="Destino">
+            <CheckBox fx:id="chDestino" layoutX="313.0" layoutY="384.0" mnemonicParsing="false" text="Destino">
                <font>
                   <Font name="Lato Bold" size="14.0" />
                </font>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
             </CheckBox>
-            <CheckBox fx:id="chFecha" layoutX="335.0" layoutY="396.0" mnemonicParsing="false" text="Fecha">
+            <CheckBox fx:id="chCodigo" layoutX="50.0" layoutY="382.0" mnemonicParsing="false" text="Código">
                <font>
                   <Font name="Lato Bold" size="14.0" />
                </font>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
             </CheckBox>
-            <Line endX="72.0" endY="287.0" layoutX="354.0" layoutY="199.0" startX="-334.0" startY="287.0" />
-            <Line endX="-304.0" endY="133.0" layoutX="324.0" layoutY="353.0" startX="-304.0" startY="470.0" />
-            <Line endX="44.0" endY="253.0" layoutX="382.0" layoutY="233.0" startX="44.0" startY="590.0" />
-            <Line endX="65.5" endY="590.5" layoutX="360.0" layoutY="233.0" startX="-340.5" startY="590.5" />
-            <Line endX="103.0" endY="90.0" layoutX="335.0" layoutY="209.0" startX="-335.0" startY="90.0" />
-            <Button fx:id="btRecuperar" layoutX="309.0" layoutY="251.0" mnemonicParsing="false" onAction="#recuperarVuelo" text="Recuperar">
+            <Line endX="103.0" endY="90.0" layoutX="338.0" layoutY="246.0" startX="-335.0" startY="90.0" />
+            <Button fx:id="btRecuperar" layoutX="307.0" layoutY="266.0" mnemonicParsing="false" onAction="#recuperarVuelo" style="-fx-background-color: #0d47a1;" text="Recuperar" textFill="WHITE">
                <font>
-                  <Font name="Consolas Bold" size="14.0" />
+                  <Font name="Calibri Bold" size="15.0" />
                </font>
+               <effect>
+                  <Glow>
+                     <input>
+                        <DropShadow />
+                     </input></Glow>
+               </effect>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
             </Button>
-            <DatePicker fx:id="dpFecha" layoutX="116.0" layoutY="209.0" prefHeight="25.0" prefWidth="150.0" />
+            <Button fx:id="btInsertarVuelo" layoutX="729.0" layoutY="18.0" mnemonicParsing="false" onAction="#insertarVuelo" prefHeight="41.0" prefWidth="184.0" style="-fx-background-color: #ff8a65; -fx-text-fill: #d81b60;" text="Insertar Vuelo" textFill="WHITE">
+               <font>
+                  <Font name="Calibri Bold" size="24.0" />
+               </font>
+               <effect>
+                  <Glow>
+                     <input>
+                        <InnerShadow />
+                     </input>
+                  </Glow>
+               </effect>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </Button>
          </children>
     </AnchorPane>
   </children>

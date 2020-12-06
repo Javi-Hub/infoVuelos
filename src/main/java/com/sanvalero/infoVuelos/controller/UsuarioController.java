@@ -1,4 +1,4 @@
-package com.sanvalero.infoVuelos;
+package com.sanvalero.infoVuelos.controller;
 
 import com.sanvalero.infoVuelos.DAO.UsuarioDAO;
 import com.sanvalero.infoVuelos.domain.Usuario;
@@ -9,10 +9,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
@@ -24,15 +21,16 @@ import java.util.Optional;
  * Creado por @author: Javier
  * el 02/12/2020
  */
-public class UsuarioController {
-
+public class UsuarioController{
+    //Declaración de variables de los campos de la ventana
     public TextField tfRegistroNombre, tfRegistroApellidos, tfRegistroNombreUsuario, tfRegistroEmail;
+    public Label lbConfirmado;
     public PasswordField pfRegistroPassword;
-    public Button btRegistrar;
 
     private UsuarioDAO usuarioDAO;
     private Optional<ButtonType> action;
 
+    // Conexion con la BBDD
     public UsuarioController(){
         usuarioDAO = new UsuarioDAO();
         try {
@@ -48,44 +46,38 @@ public class UsuarioController {
 
     @FXML
     public void registrarUsuario(ActionEvent event){
+        // Recoger datos de los campos rellenados
         String nombre = tfRegistroNombre.getText();
         String apellidos = tfRegistroApellidos.getText();
         String user = tfRegistroNombreUsuario.getText();
         String email = tfRegistroEmail.getText();
         String password = pfRegistroPassword.getText();
+
         Usuario usuario = new Usuario(nombre, apellidos, user, email, password);
         try {
             action = AlertUtils.mostrarConfirmacion("Confirmación registro");
             if (action.get() == ButtonType.OK){
-                if (nombre.equals("") || apellidos.equals("") || user.equals("") || email.equals("")){
+                if (nombre.equals("") || apellidos.equals("") || user.equals("") || email.equals("") || password.equals("")){
                     AlertUtils.mostrarError("Debe rellenar todos los campos");
                     return;
                 } else if (usuarioDAO.existeUsuario(user)){
                     AlertUtils.mostrarError("El nombre de usuario elegido ya existe");
                     return;
                 }
-                    usuarioDAO.registrarUsuario(usuario);
-                    Stage stage = new Stage();
-                    FXMLLoader loader = new FXMLLoader();
-                    loader.setLocation(R.getUI("login.fxml"));
-                    loader.setController(new LoginController());
-                    VBox vBox = loader.load();
 
-                    Scene scene = new Scene(vBox);
-                    stage.setScene(scene);
-                    stage.show();
-
-                    cerrarVentana(event);
+                usuarioDAO.registrarUsuario(usuario);
+                lbConfirmado.setText("* Usuario guardado correctamente. Acccede a la aplicación");
 
             }
 
-        } catch (SQLException | IOException sqlException) {
-            sqlException.printStackTrace();
+        } catch (SQLException sqle) {
+            sqle.printStackTrace();
         }
     }
 
     public void loginRegistro(ActionEvent event){
         Stage stage = new Stage();
+        stage.setTitle("InfoVuelos");
         FXMLLoader loader = new FXMLLoader();
         loader.setLocation(R.getUI("login.fxml"));
         loader.setController(new LoginController());
@@ -105,8 +97,8 @@ public class UsuarioController {
 
     public void cerrarVentana(ActionEvent event){
         Node source = (Node) event.getSource();
-        Stage stage1 = (Stage) source.getScene().getWindow();
-        stage1.close();
+        Stage stage = (Stage) source.getScene().getWindow();
+        stage.close();
     }
 
 }
