@@ -10,7 +10,6 @@ import java.util.Optional;
  * el 09/11/2020
  */
 public class AlertUtils {
-
     public static void mostrarError(String mensaje){
         Alert alertWarning = new Alert(Alert.AlertType.WARNING);
         alertWarning.setTitle("ALERTA");
@@ -26,5 +25,6 @@ public class AlertUtils {
         alertConfirm.setContentText("Confirmar");
         return alertConfirm.showAndWait();
     }
+
 
 }

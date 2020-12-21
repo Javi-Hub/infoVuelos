@@ -4,6 +4,7 @@ import com.sanvalero.infoVuelos.DAO.LoginDAO;
 import com.sanvalero.infoVuelos.domain.Login;
 import com.sanvalero.infoVuelos.util.AlertUtils;
 import com.sanvalero.infoVuelos.util.R;
+import com.sun.jdi.event.StepEvent;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -13,6 +14,7 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -48,7 +50,7 @@ public class LoginController {
     public void login(ActionEvent event){
         String nombre = tfLoginUsuario.getText();
         String password = pfLoginPassword.getText();
-        Login login = new Login(nombre, password);
+        //Login login = new Login(nombre, password);
 
         try {
             if (!loginDAO.existeUsuario(nombre, password)){
@@ -79,6 +81,7 @@ public class LoginController {
         VBox vBox = loader.load();
         Scene scene = new Scene(vBox);
         stage.setScene(scene);
+        //stage.initModality(Modality.APPLICATION_MODAL);
         stage.show();
         cerrarVentana(event);
     }

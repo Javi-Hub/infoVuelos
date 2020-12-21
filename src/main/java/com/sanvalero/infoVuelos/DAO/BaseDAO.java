@@ -15,8 +15,6 @@ import java.util.Properties;
 public class BaseDAO {
 
     protected Connection conexion;
-    private final String USUARIO = "root";
-    private final String PASSWORD = "";
 
     public Connection conectar() throws ClassNotFoundException, SQLException, IOException {
             Properties configuration = new Properties();

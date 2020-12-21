@@ -11,8 +11,10 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 
+import javax.swing.*;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Optional;
@@ -67,6 +69,7 @@ public class UsuarioController{
 
                 usuarioDAO.registrarUsuario(usuario);
                 lbConfirmado.setText("* Usuario guardado correctamente. Acccede a la aplicación");
+                //cerrarVentana(event);
 
             }
 
@@ -75,30 +78,31 @@ public class UsuarioController{
         }
     }
 
-    public void loginRegistro(ActionEvent event){
-        Stage stage = new Stage();
-        stage.setTitle("InfoVuelos");
-        FXMLLoader loader = new FXMLLoader();
-        loader.setLocation(R.getUI("login.fxml"));
-        loader.setController(new LoginController());
-        VBox vBox = null;
+    public void loginRegistro(ActionEvent event) {
         try {
-            vBox = loader.load();
+            Stage stage = new Stage();
+            stage.setTitle("InfoVuelos");
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(R.getUI("login.fxml"));
+            loader.setController(new LoginController());
+            VBox vBox = loader.load();
+
+            Scene scene = new Scene(vBox);
+            //stage.initModality(Modality.APPLICATION_MODAL);
+            stage.setScene(scene);
+            stage.show();
+            cerrarVentana(event);
+
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-        Scene scene = new Scene(vBox);
-        stage.setScene(scene);
-        stage.show();
-
-        cerrarVentana(event);
     }
 
-    public void cerrarVentana(ActionEvent event){
-        Node source = (Node) event.getSource();
-        Stage stage = (Stage) source.getScene().getWindow();
-        stage.close();
-    }
+        public void cerrarVentana(ActionEvent event){
+            Node source = (Node) event.getSource();
+            Stage stage = (Stage) source.getScene().getWindow();
+            stage.close();
+        }
+
 
 }

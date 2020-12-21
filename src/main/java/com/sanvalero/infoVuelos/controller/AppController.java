@@ -75,7 +75,7 @@ public class AppController implements Initializable {
         } catch (SQLException sqle) {
             AlertUtils.mostrarError("ERROR al conectar con la Base de Datos");
         } catch (IOException io){
-            AlertUtils.mostrarError("ERRROR al conectar con la Base de Datos");
+            AlertUtils.mostrarError("ERROR al conectar con la Base de Datos");
         }
 
     }
@@ -83,6 +83,17 @@ public class AppController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         try {
+            /*Stage stage = new Stage();
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(R.getUI("index.fxml"));
+            loader.setController(new UsuarioController());
+            VBox vBox = loader.load();
+
+            Scene scene = new Scene(vBox);
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.setScene(scene);
+            stage.show();*/
+
             ObservableList<String> items = FXCollections.observableArrayList("Seleccione Tipo","First Class", "Bussiness", "Premium Economy", "Economy" );
             cbClase.setItems(items);
             modoReset(true);
