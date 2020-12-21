@@ -16,6 +16,8 @@ public class VueloDAO extends BaseDAO{
 
     public PreparedStatement sentencia = null;
     public ResultSet resultado;
+
+    //Sentencias SQL para realizar las diferentes consultas a la BBDD
     public final String GUARDAR = "INSERT INTO vuelos (codigo, origen, destino, operadora, fecha, clase) VALUES (?, ?, ?, ?, ?, ?)";
     public final String MODIFICAR = "UPDATE vuelos SET origen = ?, destino = ?, operadora = ?, fecha = ?, clase = ? WHERE codigo = ?";
     public final String ELIMINAR = "DELETE FROM vuelos WHERE codigo = ?";
@@ -28,7 +30,6 @@ public class VueloDAO extends BaseDAO{
     public final String BORRAR_DATOS = "TRUNCATE TABLE vuelos";
 
     public void guardarVuelo(Vuelo vuelo)throws SQLException{
-
             sentencia = conexion.prepareStatement(GUARDAR);
             sentencia.setString(1, vuelo.getCodigo());
             sentencia.setString(2, vuelo.getOrigen());
@@ -40,7 +41,6 @@ public class VueloDAO extends BaseDAO{
     }
 
     public void modificarVuelo(Vuelo vuelo) throws SQLException{
-
             sentencia = conexion.prepareStatement(MODIFICAR);
             sentencia.setString(1, vuelo.getOrigen());
             sentencia.setString(2, vuelo.getDestino());
@@ -49,11 +49,9 @@ public class VueloDAO extends BaseDAO{
             sentencia.setString(5, vuelo.getClase());
             sentencia.setString(6, vuelo.getCodigo());
             sentencia.executeUpdate();
-
     }
 
     public void eliminarVuelo(Vuelo vuelo) throws SQLException{
-
             sentencia = conexion.prepareStatement(ELIMINAR);
             sentencia.setString(1, vuelo.getCodigo());
             sentencia.executeUpdate();
@@ -64,13 +62,11 @@ public class VueloDAO extends BaseDAO{
         sentencia.executeUpdate();
     }
 
-
     public boolean existeVuelo(String codigo) throws SQLException{
         sentencia = conexion.prepareStatement(EXISTE);
         sentencia.setString(1, codigo);
         resultado = sentencia.executeQuery();
         return resultado.next();
-
     }
 
     public List<Vuelo> filtrarOrigen (String origen) throws SQLException{
@@ -151,10 +147,7 @@ public class VueloDAO extends BaseDAO{
         return lista;
     }
 
-
-
     public List<Vuelo> listarVuelos() throws SQLException{
-
             sentencia = conexion.prepareStatement(LISTAR_VUELOS);
             resultado = sentencia.executeQuery();
             List<Vuelo> lista = new ArrayList<Vuelo>();
@@ -169,6 +162,4 @@ public class VueloDAO extends BaseDAO{
             return lista;
 
     }
-
-
 }

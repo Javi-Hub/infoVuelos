@@ -83,17 +83,6 @@ public class AppController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         try {
-            /*Stage stage = new Stage();
-            FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(R.getUI("index.fxml"));
-            loader.setController(new UsuarioController());
-            VBox vBox = loader.load();
-
-            Scene scene = new Scene(vBox);
-            stage.initModality(Modality.APPLICATION_MODAL);
-            stage.setScene(scene);
-            stage.show();*/
-
             ObservableList<String> items = FXCollections.observableArrayList("Seleccione Tipo","First Class", "Bussiness", "Premium Economy", "Economy" );
             cbClase.setItems(items);
             modoReset(true);
@@ -206,13 +195,6 @@ public class AppController implements Initializable {
         }
     }
 
-    public void mostrarLabelTemporal(){
-        lbEstado.setVisible(true);
-        PauseTransition visiblePause = new PauseTransition(Duration.seconds(3));
-        visiblePause.setOnFinished(event -> lbEstado.setVisible(false));
-        visiblePause.play();
-    }
-
     @FXML
     public void borrarBBDD(ActionEvent event){
         try {
@@ -309,6 +291,7 @@ public class AppController implements Initializable {
 
     }
 
+    //Método para mostrar el logotipo de la compañía de vuelos al seleccionar en la TableView
     @FXML
     private void selectorLogo(String name){
         switch (name){
@@ -359,6 +342,7 @@ public class AppController implements Initializable {
         }
     }
 
+    //Método para mostrar la compañía al insertar una nueva en el campo TextField "operadora"
     @FXML
     private void cargarLogo(){
 
@@ -375,6 +359,7 @@ public class AppController implements Initializable {
         });
     }
 
+    //Configuración de las columnas de la TableView
     @FXML
     private void configTableView(){
         tcCodigo.setCellValueFactory(new PropertyValueFactory<Vuelo, String>("codigo"));
@@ -385,6 +370,7 @@ public class AppController implements Initializable {
         tcClase.setCellValueFactory(new PropertyValueFactory<Vuelo, String>("clase"));
     }
 
+    // Cargar la TableView con los registros de la BBDD
     @FXML
     private void cargarTableView(List<Vuelo> list) throws SQLException{
         listaVuelos = FXCollections.observableArrayList(list);
@@ -392,7 +378,7 @@ public class AppController implements Initializable {
         configTableView();
     }
 
-
+    //Generar un nuevo código al insertar un nuevo vuelo
     @FXML
     private void nuevoCodigo(Event event){
         Vuelo vuelo = new Vuelo();
@@ -400,6 +386,23 @@ public class AppController implements Initializable {
         tfCodigo.setText(vuelo.getCodigo());
     }
 
+    //Configuración de la aplicación para insertar un nuevo vuelo
+    @FXML
+    public void insertarVuelo(ActionEvent event){
+        modoEdicion(true);
+        limpiarCajas();
+    }
+
+    //Mostrar durante 3 segundos la operación realizada
+    @FXML
+    public void mostrarLabelTemporal(){
+        lbEstado.setVisible(true);
+        PauseTransition visiblePause = new PauseTransition(Duration.seconds(3));
+        visiblePause.setOnFinished(event -> lbEstado.setVisible(false));
+        visiblePause.play();
+    }
+
+    //Limpiar los campos de inserción de datos
     private void limpiarCajas() {
         tfCodigo.setText("");
         tfOrigen.setText("");
@@ -408,14 +411,17 @@ public class AppController implements Initializable {
         dpFecha.setValue(LocalDate.now());
         cbClase.setValue("Seleccione Tipo");
         lbEstado.setText("");
+        tfFiltroCodigo.setText("");
         tfFiltroOrigen.setText("");
         tfFiltroDestino.setText("");
+        chCodigo.selectedProperty().set(false);
         chOrigen.selectedProperty().set(false);
         chDestino.selectedProperty().set(false);
         image = new Image(R.getImage("avion.png"));
         imageLogo.setImage(image);
     }
 
+    //Configuración de la aplicación en modo inserción de datos
     private void modoEdicion (boolean activar){
         btNuevo.setDisable(!activar);
         btReset.setDisable(!activar);
@@ -439,6 +445,7 @@ public class AppController implements Initializable {
         chOrigen.setDisable(activar);
     }
 
+    //Configuración de la aplicación en modo reseteo de campos
     private void modoReset(boolean activar){
         btNuevo.setDisable(activar);
         btReset.setDisable(!activar);
@@ -462,6 +469,7 @@ public class AppController implements Initializable {
         tfFiltroDestino.setEditable(activar);
     }
 
+    //Configuración de la aplicación en modo modificación de datos
     private void modoModificar (boolean activar){
         btNuevo.setDisable(activar);
         btReset.setDisable(!activar);
@@ -484,12 +492,5 @@ public class AppController implements Initializable {
         chDestino.setDisable(activar);
         chOrigen.setDisable(activar);
     }
-
-    @FXML
-    public void insertarVuelo(ActionEvent event){
-        modoEdicion(true);
-        limpiarCajas();
-    }
-
 
 }

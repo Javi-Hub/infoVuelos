@@ -12,6 +12,8 @@ import java.util.Properties;
  * Creado por @author: Javier
  * el 02/11/2020
  */
+
+//Clase para conectar con la BBDD
 public class BaseDAO {
 
     protected Connection conexion;
@@ -33,9 +35,7 @@ public class BaseDAO {
     }
 
     public void desconectar() throws SQLException{
-
         conexion.close();
-        //conexion = null;
     }
 
 }

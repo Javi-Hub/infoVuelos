@@ -13,6 +13,7 @@ public class LoginDAO extends BaseDAO{
     public PreparedStatement sentencia = null;
     public ResultSet resultado;
 
+    //Sentencia SQL para validar el usuario
     public final String EXISTE_USUARIO = "SELECT * FROM usuarios WHERE nombre_usuario = ? AND password = ?";
 
     public boolean existeUsuario(String nombre, String password) throws SQLException {

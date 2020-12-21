@@ -18,14 +18,13 @@ public class Vuelo {
 
     private final int N = 6;
 
+    // Constructores de la clase Vuelo
     public Vuelo(){
 
     }
-
     public Vuelo(String codigo){
         this.codigo = codigo;
     }
-
     public Vuelo(String codigo, String origen, String destino, String operadora, Date fecha, String clase) {
         this.codigo = codigo;
         this.origen = origen;
@@ -35,6 +34,7 @@ public class Vuelo {
         this.clase = clase;
     }
 
+    //Generar código del vuelo
     public void setCodigo(){
         Random rd= new Random();
         String identificador = "";
@@ -54,49 +54,37 @@ public class Vuelo {
     public void setOrigen(String origen) {
         this.origen = origen;
     }
-
     public void setDestino(String destino) {
         this.destino = destino;
     }
-
     public void setOperadora(String operadora) {
         this.operadora = operadora;
     }
-
     public void setFecha(Date fecha) {
         this.fecha = fecha;
     }
-
     public void setClase(String clase) {
         this.clase = clase;
     }
-
     public String getOrigen() {
         return origen;
     }
-
     public String getDestino() {
         return destino;
     }
-
     public String getOperadora() {
         return operadora;
     }
-
     public Date getFecha() {
         return fecha;
     }
-
     public String getClase() {
         return clase;
     }
-
     public String getCodigo(){
         return codigo;
     }
-
     public String toString(){
         return codigo + "-" + origen + "-" + destino + "-" + operadora + "-" + fecha + "-" + clase;
     }
-
 }

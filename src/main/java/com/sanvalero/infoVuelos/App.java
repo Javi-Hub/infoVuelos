@@ -32,28 +32,6 @@ public class App extends Application {
         Scene scene = new Scene(vBox);
         primaryStage.setScene(scene);
         primaryStage.show();
-
-        /*FXMLLoader loader = new FXMLLoader();
-        loader.setLocation(R.getUI("infoVuelos.fxml"));
-        loader.setController(new AppController());
-        VBox vBox = loader.load();
-        primaryStage.setTitle("InfoVuelos");
-        Scene scene = new Scene(vBox);
-        primaryStage.setScene(scene);
-        primaryStage.show();
-
-        Stage stage = new Stage();
-        FXMLLoader loaderSecondary = new FXMLLoader();
-        loaderSecondary.setLocation(R.getUI("index.fxml"));
-        loaderSecondary.setController(new UsuarioController());
-        VBox vBoxSecondary = loaderSecondary.load();
-
-        Scene sceneSecondary = new Scene(vBoxSecondary);
-        stage.initModality(Modality.APPLICATION_MODAL);
-        stage.setScene(sceneSecondary);
-        stage.show();
-        stage.setOnCloseRequest(t -> primaryStage.close());*/
-
     }
 
     @Override

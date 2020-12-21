@@ -46,11 +46,11 @@ public class LoginController {
         }
     }
 
+    //Método para que el usuario haga Login y acceder a la aplicación
     @FXML
     public void login(ActionEvent event){
         String nombre = tfLoginUsuario.getText();
         String password = pfLoginPassword.getText();
-        //Login login = new Login(nombre, password);
 
         try {
             if (!loginDAO.existeUsuario(nombre, password)){
@@ -72,6 +72,8 @@ public class LoginController {
             sqlException.printStackTrace();
         }
     }
+
+    //Método para volver a la opción anterior
     @FXML
     public void volver(ActionEvent event) throws IOException {
         Stage stage = new Stage();

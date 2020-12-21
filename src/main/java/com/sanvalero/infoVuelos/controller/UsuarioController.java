@@ -46,6 +46,7 @@ public class UsuarioController{
         }
     }
 
+    //Método para registrar un usuario nuevo
     @FXML
     public void registrarUsuario(ActionEvent event){
         // Recoger datos de los campos rellenados
@@ -66,11 +67,8 @@ public class UsuarioController{
                     AlertUtils.mostrarError("El nombre de usuario elegido ya existe");
                     return;
                 }
-
                 usuarioDAO.registrarUsuario(usuario);
                 lbConfirmado.setText("* Usuario guardado correctamente. Acccede a la aplicación");
-                //cerrarVentana(event);
-
             }
 
         } catch (SQLException sqle) {
@@ -78,6 +76,7 @@ public class UsuarioController{
         }
     }
 
+    //Método para acceder a la ventana de Login en caso de que ya esté registrado
     public void loginRegistro(ActionEvent event) {
         try {
             Stage stage = new Stage();
@@ -88,7 +87,6 @@ public class UsuarioController{
             VBox vBox = loader.load();
 
             Scene scene = new Scene(vBox);
-            //stage.initModality(Modality.APPLICATION_MODAL);
             stage.setScene(scene);
             stage.show();
             cerrarVentana(event);
@@ -98,11 +96,12 @@ public class UsuarioController{
         }
     }
 
-        public void cerrarVentana(ActionEvent event){
-            Node source = (Node) event.getSource();
-            Stage stage = (Stage) source.getScene().getWindow();
-            stage.close();
-        }
+
+    public void cerrarVentana(ActionEvent event){
+        Node source = (Node) event.getSource();
+        Stage stage = (Stage) source.getScene().getWindow();
+        stage.close();
+    }
 
 
 }
