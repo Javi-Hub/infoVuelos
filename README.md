@@ -9,4 +9,5 @@
 - Opción al usuario de poder recuperar el último elemento eliminado
 - Opción para eliminar todos los datos del programa, desde la pestaña File
 - Fichero properties - El fichero database-sample.properties debe ser renombrado a database.properties e introducir los datos necesarios para conectar con la BBDD
-- Posibilidad de exportar los datos a un fichero .csov
+- Posibilidad de exportar los datos a un fichero .csv
+- Proyecto en git y GitHub
